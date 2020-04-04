@@ -12,8 +12,8 @@ import 'LoginScreen.dart';
 import 'RegistertionAccount.dart';
 import 'flutter_maps/google_map/showMap.dart';
 
-
-
+String result = "";
+String deviceNameP='';
 
 void main() {
 //MapView.setApiKey("AIzaSyDVlsGtxNYsdrq1G0KGg2yTJiHUBtpId7g");

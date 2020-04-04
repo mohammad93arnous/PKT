@@ -10,15 +10,16 @@ import 'userProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'RegistertionAccount.dart';
+import 'main.dart';
+
 class DeviceInfo extends StatefulWidget {
   DeviceInfo({this.result});
   @override
   State<StatefulWidget> createState() => new _DeviceInfoState();
-final result;
+  final result;
 }
 
 class _DeviceInfoState extends State<DeviceInfo> {
-
   final _scaffoldKey = GlobalKey(); // Scaffold Key
 
   bool _obscureTextLogin = true;
@@ -28,31 +29,57 @@ class _DeviceInfoState extends State<DeviceInfo> {
   bool deviceNameValidated = false;
   bool deviceSerialValidated = false;
 
-String deviceName;
-String deviceSerial;
+  String deviceName = '';
+  String deviceSerial = '';
+  String qrResult;
 
   @override
   void initState() {
+    checkIfQRScanned();
     super.initState();
   }
+
   void _toggleLogin() {
     setState(() {
       _obscureTextLogin = !_obscureTextLogin;
     });
   }
+
   @override
   void dispose() {
     super.dispose();
   }
+
+  checkIfQRScanned() {
+    if (result == null) {
+      setState(() {
+        deviceSerial = 'Device Serial Number';
+        deviceName = 'Input your Device Name';
+      });
+    } else if (result != null) {
+      setState(() {
+        deviceSer.text = result;
+        //deviceSerial=result;
+        deviceAccountName.text = deviceNameP;
+      });
+    }
+  }
+
   deviNameValidation() {
-    if (deviceAccountName.text == null || deviceName.length <= 3) {
-      snackError('Name Must Contain Text Only', context);
-      deviceNameValidated = false;
-    } else if (deviceAccountName.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
-        true) {
-      snackError('Name Must Contain Text Only', context);
-      deviceNameValidated = false;
-    } else {
+    if(deviceNameP==null){
+      if (deviceAccountName.text == null || deviceName.length <= 3) {
+        snackError('Name Must Contain Text Only', context);
+        deviceNameValidated = false;
+      } else if (deviceAccountName.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
+          true) {
+        snackError('Name Must Contain Text Only', context);
+        deviceNameValidated = false;
+      } else {
+        setState(() {
+          deviceNameValidated = true;
+        });
+      }
+    }else{
       setState(() {
         deviceNameValidated = true;
       });
@@ -60,23 +87,28 @@ String deviceSerial;
   }
 
   deviSiralValidation() {
-    if (deviceSer.text == null || deviceSerial.length <= 3) {
-      snackError('Serial Number Must Contain Text Only', context);
-      deviceSerialValidated = false;
-    } else if (deviceSer.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
-        true) {
-      snackError('Serial Number Must Contain Text Only', context);
-      deviceSerialValidated = false;
-    } else {
+    if(result==null){
+      if (deviceSer.text == null || deviceSerial.length <= 3) {
+        snackError('Serial Number Must Contain Text Only', context);
+        deviceSerialValidated = false;
+      } else if (deviceSer.text.contains('-,*,/,+,=,(,),%,@,!', 0) == true) {
+        snackError('Serial Number Must Contain Text Only', context);
+        deviceSerialValidated = false;
+      } else {
+        setState(() {
+          deviceSerialValidated = true;
+        });
+      }
+    }else{
       setState(() {
         deviceSerialValidated = true;
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),
@@ -102,24 +134,29 @@ String deviceSerial;
             ),
             Padding(
               padding: const EdgeInsets.all(30.0),
-              child: TextFormField(inputFormatters: [WhitelistingTextInputFormatter(RegExp("[a-zA-Z 0-9 _-]"))],
-    controller: deviceAccountName,
-    keyboardType: TextInputType.text,
+              child: TextFormField(
+                inputFormatters: [
+                  WhitelistingTextInputFormatter(RegExp("[a-zA-Z 0-9 _-]"))
+                ],
+                controller: deviceAccountName,
+                keyboardType: TextInputType.text,
                 style: TextStyle(
                   color: Colors.black,
                 ),
-                decoration: InputDecoration(//should be all small
+                decoration: InputDecoration(
+                    //should be all small
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
-                    hintText: "Input your Device Name",
+                    hintText: "Input your Device Name $deviceName",
                     prefixIcon: Icon(Icons.watch)),
-                onChanged: (val){
+                onChanged: (val) {
                   setState(() {
-                    deviceName=val;
+                    deviceName = val;
+                    deviceNameP = val;
                   });
                 },
               ),
@@ -133,18 +170,19 @@ String deviceSerial;
                 style: TextStyle(
                   color: Colors.black,
                 ),
-                decoration: InputDecoration(//should be all small
+                decoration: InputDecoration(
+                    //should be all small
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
-                    hintText: "Device Serial Number",
+                    hintText: 'Device Serial Number $deviceSerial',
                     prefixIcon: Icon(Icons.create)),
-                onChanged: (val){
+                onChanged: (val) {
                   setState(() {
-                    deviceSerial=val;
+                    deviceSerial = val;
                   });
                 },
               ),
@@ -154,10 +192,15 @@ String deviceSerial;
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => AddingDevice()));
+//                  Navigator.of(context).push(MaterialPageRoute(
+//                      builder: (BuildContext context) => AddingDevice()));
+                  scanQR().whenComplete((){
+                    setState(() {
+                      result = qrResult;
+                    });
+                    checkIfQRScanned();
+                  });
                 },
-
                 child: Text(
                   'Scan QR Code',
                   style: TextStyle(
@@ -195,7 +238,6 @@ String deviceSerial;
                     onPressed: () {
                       Navigator.pop(context);
                     },
-
                     child: Text(
                       'Back',
                       style: TextStyle(
@@ -207,11 +249,11 @@ String deviceSerial;
                   ),
                   RaisedButton(
                     onPressed: () {
-
                       validatingBeforeNavigate();
-
-
-
+                      print('1 $deviceName');
+                      print('2 $deviceNameP');
+                      print('3 $deviceSerial');
+                      print('2 '+deviceSer.text);
                     },
                     child: Text(
                       'Save',
@@ -229,20 +271,46 @@ String deviceSerial;
         ),
       ),
     );
-
   }
-
-
-
-
+  Future scanQR() async {
+    try {
+      qrResult = await BarcodeScanner.scan();
+      setState(() {
+        result = qrResult;
+      });
+      checkIfQRScanned();
+    } on PlatformException catch (ex) {
+      if (ex.code == BarcodeScanner.CameraAccessDenied) {
+        snackError('Camera permission was denied', context);
+      } else {
+        snackError('Unknown Error', context);
+      }
+    } on FormatException {
+      snackError('You pressed the back button before scanning anything', context);
+    } catch (ex) {
+      snackError('Unknown Error', context);
+    }
+    //checkIfQRScanned();
+  }
   Future validatingBeforeNavigate() {
     print(deviceNameValidated.toString());
     print(deviceSerialValidated.toString());
+  if(deviceNameP!=null && deviceSer.text!=null){
+    print('1');
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => RegistertionAccount(
+          deviceName: deviceNameP,
+          deviceSerial: deviceSer.text,
+          //result: widget.result,
+          //ToDO:
+        )));
+  }else{
+    print('else');
     if (deviceName == null) {
       snackError('Device Name cannot be empty', context);
-    } else if (deviceSerial == null) {
+    } else if (deviceSerial == null|| result==null) {
       snackError('Device Serial Number cannot be empty', context);
-    } else if (deviceName == null) {
+    } else if (deviceName == null||deviceNameP==null) {
       snackError('Re-Password cannot be empty', context);
     } else {
       deviNameValidation();
@@ -254,26 +322,20 @@ String deviceSerial;
           deviceSerialValidated = false;
         });
       } else {
-//        loginAccountName.clear();
-//        loginPasswordController.clear();
-//        loginRePasswordController.clear();
-
         print(deviceNameValidated.toString());
         print(deviceSerialValidated.toString());
         if (deviceNameValidated == false && deviceSerialValidated == false) {
         } else {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) =>
-                RegistertionAccount(
-                deviceName:deviceName,
-                deviceSerial :deviceSerial,
-                  result: widget.result,
-
-                  )
-          ));
+              builder: (BuildContext context) => RegistertionAccount(
+                deviceName: deviceName,
+                deviceSerial: deviceSerial,
+                //result: widget.result,
+                //ToDo:
+              )));
         }
       }
     }
   }
-
+  }
 }

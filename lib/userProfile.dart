@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:passwordfield/passwordfield.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:pktapp/HomePage.dart';
 import 'package:pktapp/flutter_maps/google_map/showMap.dart';
 import 'AUTH/Auth.dart';
 import 'SnackBar.dart';
@@ -104,7 +105,15 @@ class _UserPofState extends State<UserPof> {
               title: Text("History"),
               trailing: Icon(Icons.history),
             ),
-
+            ListTile(
+              onTap: (){
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+              },
+              title: Text("SignOut",style: TextStyle(color:Colors.red),),
+              trailing: Icon(Icons.exit_to_app,color: Colors.red,),
+            ),
           ],
         ),
       ),

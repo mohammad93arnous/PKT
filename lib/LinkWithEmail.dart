@@ -16,27 +16,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'DeviceInfo.dart';
 import 'dart:io';
 
-
 class LinkWithEmail extends StatefulWidget {
-  LinkWithEmail({this.accountName,this.password,this.deviceName,this.deviceSerial,this.result});
+  LinkWithEmail(
+      {this.accountName, this.password, this.deviceName, this.deviceSerial, this.result});
   @override
   State<StatefulWidget> createState() => new _LinkWithEmailState();
-  final String accountName;
-  final String password;
-  final String deviceName;
-  final String deviceSerial;
-  final String result;
-
-
-
+  String accountName;
+  String password;
+  String deviceName;
+  String deviceSerial;
+  String result;
 }
 
 class _LinkWithEmailState extends State<LinkWithEmail> {
   final _scaffoldKey = GlobalKey(); // Scaffold Key
   String email;
-  String userID='';
+  String userID = '';
   FirebaseUser user;
-
 
   @override
   void initState() {
@@ -45,22 +41,17 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
     print(widget.deviceName);
     print(widget.deviceSerial);
 
-
     super.initState();
   }
 
-
-  Future signUp () async{
-    if(email==null){
+  Future signUp() async {
+    if (email == null) {
       snackError('Email is Empty', context);
-    }else{
-      try{
-       user= await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email,
-            password:widget.password
-        );
-
-      }catch (e){
+    } else {
+      try {
+        user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: email, password: widget.password);
+      } catch (e) {
         snackError(e.toString(), context);
       }
     }
@@ -68,57 +59,45 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
     return user;
   }
 
-  Future saveUser()async{
-    if(user !=null){
-      if(user.uid !=null && user.email !=null){
+  Future saveUser() async {
+    if (user != null) {
+      if (user.uid != null && user.email != null) {
         setState(() {
-          userID=user.uid;
+          userID = user.uid;
         });
         await Firestore.instance.collection('UsersAccount').document(userID).setData({
-          'AccountName':widget.accountName,
-          'Email':email,
-          'UserID':userID,
-          'FamilyUser':{
-            'UserId1':' '
-          },
-          'Devices':{
-            '1':{
-              'DeviceLocations':{
-                'Location1':{
-                  'Altitude':' ',
-                  'Latitude':'',
+          'AccountName': widget.accountName,
+          'Email': email,
+          'UserID': userID,
+          'Devices': {
+            '1': {
+              'DeviceLocations': {
+                'Location1': {
+                  'Altitude': ' ',
+                  'Latitude': '',
                 },
               },
-              'DeviceName':widget.deviceName,
-              'DeviceSerialNumber':widget.deviceSerial,
-              'QR':widget.result,
+              'DeviceName': widget.deviceName,
+              'DeviceSerialNumber': widget.deviceSerial,
             }
           }
         });
-
-//      else if (_loginPassword == null) {
-//        snackError('Password cannot be empty', context);
-//        passValidated=false;//new
-//      }
-
-      if(email!=null && email.length>6){
-          if (email.contains("@") ==true){
-                    Navigator.of(context).push(MaterialPageRoute(
-                         builder: (BuildContext context) => UserPof()));
-              }else {
-             return  snackError(" Email must be lower case",context);
-
-              }
-              }else{
-              return snackError("Invalid Email",context);
-              }
-      }else{
+        if (email != null && email.length > 6) {
+          if (email.contains("@") == true) {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => UserPof()));
+          } else {
+            return snackError(" Email must be lower case", context);
+          }
+        } else {
+          return snackError("Invalid Email", context);
+        }
+      } else {
         snackError('Connection Error', context);
       }
-    }else{
+    } else {
       snackError('Email Does Not Exist ', context);
     }
-
   }
 
   @override
@@ -150,12 +129,16 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
             ),
             Padding(
               padding: const EdgeInsets.all(30.0),
-              child: TextField(inputFormatters: [WhitelistingTextInputFormatter(RegExp("[a-z@. 0-9 _-]"))],
+              child: TextField(
+                inputFormatters: [
+                  WhitelistingTextInputFormatter(RegExp("[a-z@. 0-9 _-]"))
+                ],
                 keyboardType: TextInputType.emailAddress,
                 style: TextStyle(
                   color: Colors.black,
                 ),
-                decoration: InputDecoration(//should be all small
+                decoration: InputDecoration(
+                    //should be all small
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
@@ -164,9 +147,9 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                         borderSide: BorderSide(width: 2, color: Colors.green)),
                     hintText: "Input your email",
                     prefixIcon: Icon(Icons.account_circle)),
-                onChanged: (val){
+                onChanged: (val) {
                   setState(() {
-                    email=val;
+                    email = val;
                   });
                 },
               ),
@@ -197,7 +180,6 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-
                     child: Text(
                       'Back',
                       style: TextStyle(
@@ -209,20 +191,17 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                   ),
                   RaisedButton(
                     onPressed: () {
-
-                      saveUser();
-                      signUp();
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                          UserPof(
-                            deviceName:widget.deviceName,
-                            deviceSerial :widget.deviceSerial,
-                            accountName: widget.accountName,
-                            email: email,
-
-                          )
-                      ));
-
+                      signUp().whenComplete(() {
+                        saveUser().whenComplete(() {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) => UserPof(
+                                    deviceName: widget.deviceName,
+                                    deviceSerial: widget.deviceSerial,
+                                    accountName: widget.accountName,
+                                    email: email,
+                                  )));
+                        });
+                      });
                     },
                     child: Text(
                       'Complete',
@@ -241,6 +220,4 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
       ),
     );
   }
-
-
 }
