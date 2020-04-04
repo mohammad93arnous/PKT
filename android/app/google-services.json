@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "214771093945",
+    "firebase_url": "https://pkt-database.firebaseio.com",
+    "project_id": "pkt-database",
+    "storage_bucket": "pkt-database.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214771093945:android:945073d5b970e9fc832668",
+        "android_client_info": {
+          "package_name": "com.pkt.pktapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "214771093945-s5q7b2k608nur5sq6bg2gfo86oq9bo45.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7O7y2OK9V53Wd75pgVmdOQWBausGAVPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "214771093945-s5q7b2k608nur5sq6bg2gfo86oq9bo45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
