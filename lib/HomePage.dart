@@ -251,6 +251,7 @@ height: 200,
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) =>
                             UserPof(
+                              uID: userId,
                               accountName: widget.accountName,
                               email: widget.email,
                               deviceName:widget.deviceName,
