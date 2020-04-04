@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,6 +22,7 @@ class _ShowMapState extends State<ShowMap> {
   Marker marker; // Marker that mark the location (car icon)
   Circle circle; // Circle Radius
   GoogleMapController _controller; // Google Map Controller for controlling the drag, zoom and unzoom.
+  List<QuerySnapshot> _ListAllDevices;
  static LatLng _center=const LatLng(26.455234, 50.104569);
   @override
   void initState() { // First Load User Location
@@ -126,9 +128,7 @@ class _ShowMapState extends State<ShowMap> {
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),leading:IconButton(
         icon: Icon(Icons.arrow_back),onPressed: (){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (BuildContext context) =>UserPof()
-        ));
+       Navigator.of(context).pop();
     },
       ),
         title: Center(child: Text('Live Location',style: TextStyle(
@@ -146,7 +146,7 @@ class _ShowMapState extends State<ShowMap> {
 
         mapType: _defaultMapType,// Map type satellite or normal ....
         initialCameraPosition: initialLocation, // initial camera until getting user location
-        markers: Set.of((marker != null) ? [marker] : []), // marker if null hide
+        markers: Set.of((marker != null) ? [marker,marker,marker] : []), // marker if null hide
         circles: Set.of((circle != null) ? [circle] : []), // circles if null hide
         onMapCreated: (GoogleMapController controller) { // Map Launch
           _controller = controller; // Controller of google map to be able to drag , zoom and unZoom

@@ -271,7 +271,34 @@ showEditUserNameBottomSheet(BuildContext context) {
         BottomNavigationBarItem(
             icon: Icon(Icons.add_box), title: Text("New Device"))
       ]),
+body: userBody(),
+    );
+  }
+  Widget userBody(){
+    return Container(
+      height: 624,
+      child: ListView(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Container(
+              height: 75,
+              decoration: BoxDecoration(
+                  color: Colors.lightGreen.shade300.withOpacity(0.70),
+                  border: Border.all(color: Colors.white54, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
 
+                ],
+              ),
+            ),
+          )
+
+        ],
+      ),
     );
   }
 }
