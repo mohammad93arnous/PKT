@@ -201,7 +201,7 @@ showEditUserNameBottomSheet(BuildContext context) {
                 ),
               ),
             ),
-            
+
             ListTile(
                 title: Text(
                   "Profile",
@@ -292,7 +292,23 @@ body: userBody(),
               child: ListView(
                 shrinkWrap: true,
                 children: <Widget>[
+                ListTile(
+                  leading: CircleAvatar(radius:25.0, backgroundImage:AssetImage('assets/band.png'),),
+                  title: Text("Kid Name : Mohammad ",style: TextStyle(fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 15.0,
+                    color: Colors.black,),
+                ),
+                    //Adding an Icon that mean this is the name of the kid section
 
+                    subtitle: Text("Location : Dammam,Alsalam ",style: TextStyle(fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 13.0,
+                        color: Colors.redAccent),
+                    ),//Adding an Icon that mean of the location Icaon
+
+
+                )
                 ],
               ),
             ),

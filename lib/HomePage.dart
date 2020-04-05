@@ -1,22 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:passwordfield/passwordfield.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:pktapp/DeviceInfo.dart';
 import 'package:pktapp/userProfile.dart';
 import 'AUTH/Auth.dart';
 import 'SnackBar.dart';
-import 'package:flushbar/flushbar_route.dart';
-import 'BillSpliter.dart';
-import 'RegistertionAccount.dart';
-import 'package:flutter/cupertino.dart';
 
-
-import 'package:flutter/cupertino.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({this.accountName,this.email,this.deviceName});

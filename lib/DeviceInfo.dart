@@ -1,13 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:pktapp/LinkWithEmail.dart';
-import 'Adding Device.dart';
 import 'SnackBar.dart';
-import 'userProfile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'RegistertionAccount.dart';
 import 'main.dart';
@@ -16,11 +11,11 @@ class DeviceInfo extends StatefulWidget {
   DeviceInfo({this.result});
   @override
   State<StatefulWidget> createState() => new _DeviceInfoState();
-  final result;
+  String result;
 }
 
 class _DeviceInfoState extends State<DeviceInfo> {
-  final _scaffoldKey = GlobalKey(); // Scaffold Key
+
 
   bool _obscureTextLogin = true;
   TextEditingController deviceAccountName = new TextEditingController();

@@ -1,26 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:passwordfield/passwordfield.dart';
-import 'package:email_validator/email_validator.dart';
-import 'package:pktapp/DeviceInfo.dart';
 import 'LinkWithEmail.dart';
 import 'SnackBar.dart';
-import 'package:flushbar/flushbar_route.dart';
 import 'HomePage.dart';
-import 'Adding Device.dart';
+
 
 class RegistertionAccount extends StatefulWidget {
   RegistertionAccount({this.deviceName,this.deviceSerial,this.result});
   @override
   State<StatefulWidget> createState() => new _RegistertionAccountState();
-  final String deviceName;
-  final String deviceSerial;
-  final String result;
+  String deviceName;
+  String deviceSerial;
+  String result;
 }
 
 class _RegistertionAccountState extends State<RegistertionAccount> {

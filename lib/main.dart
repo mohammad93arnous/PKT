@@ -19,6 +19,6 @@ void main() {
 //MapView.setApiKey("AIzaSyDVlsGtxNYsdrq1G0KGg2yTJiHUBtpId7g");
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false, // to remove Red DEBUG Banner
-    home: HomePage(),
+    home: UserPof(),
   ));
 }

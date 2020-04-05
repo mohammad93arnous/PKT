@@ -5,11 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:pktapp/userProfile.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
-//String key = "AIzaSyA8x6tCYhAAKmaUwtC8q_L2ucuiRtdcBVY";
 String key = "AIzaSyB7O7y2OK9V53Wd75pgVmdOQWBausGAVPY";
 
 class ShowMap extends StatefulWidget {
