@@ -59,11 +59,11 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
 
   accountNameValidation() {
     if (loginAccountName.text == null || accountName.length <= 3) {
-      snackError('Name Must Contain Text Only', context);
+     // snackError('Name Must Contain Text Only', context);
       userNameValidated = false;
     } else if (loginAccountName.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
         true) {
-      snackError('Name Must Contain Text Only', context);
+     // snackError('Name Must Contain Text Only', context);
       userNameValidated = false;
     } else {
       setState(() {
@@ -75,15 +75,15 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
   passwordValidation() {
     if (loginPasswordController.text != null &&
         loginPasswordController.text.length < 4) {
-      snackError('Passwoed must be more than 4', context);
+    //  snackError('Passwoed must be more than 4', context);
 
     } else if (loginRePasswordController.text != null &&
         loginRePasswordController.text.length < 4) {
-      snackError('Passwoed must be more than 4', context);
+      //snackError('Passwoed must be more than 4', context);
 
     } else if (loginPasswordController.text != loginRePasswordController.text &&
         loginRePasswordController.text != loginPasswordController.text) {
-      snackError('Passwoed is not matched', context);
+     // snackError('Passwoed is not matched', context);
 
     } else {
       setState(() {
@@ -233,7 +233,10 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
             ),
             Padding(
               padding: const EdgeInsets.all(2.0),
-              child: RaisedButton(
+              child:Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+              RaisedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => HomePage()));
@@ -247,10 +250,9 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
                 ),
                 color: Colors.white70,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: RaisedButton(
+
+
+               RaisedButton(
                 onPressed: () {
                   validatingBeforeNavigate();
                 },
@@ -263,7 +265,10 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
                 ),
                 color: Colors.white70,
               ),
+              ],
             ),
+    ),
+
           ],
         ),
       ),
@@ -275,23 +280,23 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     print(userNameValidated.toString());
     print(passValidated.toString());
     if (accountName == null) {
-     return snackError('Account Name cannot be empty', context);
+     //return snackError('Account Name cannot be empty', context);
 
     }else if (loginAccountName.text.contains('- * / + = ( ) % @ !', 0) ==
         true) {
-       return snackError('Name Must Contain Text Only', context);
+      // return snackError('Name Must Contain Text Only', context);
 
     }
 
     else if (_loginPassword == null) {
-      snackError('Password cannot be empty', context);
+     // snackError('Password cannot be empty', context);
       passValidated=false;//new
     } else if (loginRePassword == null) {
-      snackError('Re-Password cannot be empty', context);
+    //  snackError('Re-Password cannot be empty', context);
       passValidated=false;//new
     } else if (loginPasswordController.text != loginRePasswordController.text &&
         loginRePasswordController.text != loginPasswordController.text) {
-      snackError('Passwoed is not matched', context);
+      //snackError('Passwoed is not matched', context);
 
     }
 

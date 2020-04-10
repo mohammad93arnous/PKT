@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pktapp/DeviceInfo.dart';
 import 'package:pktapp/userProfile.dart';
 import 'AUTH/Auth.dart';
@@ -11,22 +12,32 @@ import 'SnackBar.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({this.accountName,this.email,this.deviceName});
+
   @override
   State<StatefulWidget> createState() => new _HomePageState();
-  final String accountName;
-  final String email;
-  final String deviceName;
+   String accountName;
+   String email;
+   String deviceName;
+
 }
 
 class _HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey(); // Scaffold Key
 
+  bool _obscureTextLogin = true;
   Auth auth = new Auth();
   String email;
   String password;
   String userId = "";
   FirebaseUser user;
   @override
+
+  void _toggleLogin() {
+    setState(() {
+      _obscureTextLogin = !_obscureTextLogin;
+    });
+  }
+
   void initState() {
     super.initState();
   }
@@ -45,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         }
       }
     } catch (e) {
-      snackError('Email or Password Invalid',context);
+      //snackError('Email or Password Invalid',context);
     }
     return null;
   }
@@ -54,50 +65,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-
-      // Key For calling Scaffold to show SnackBar
-//      drawer: Drawer(
-//        child: ListView(
-//          children: <Widget>[
-//            UserAccountsDrawerHeader(
-//              accountName: Text("Mohammad Salah "),
-//              accountEmail: Text("mohammad93arnous@gmail.com"),
-//              currentAccountPicture: CircleAvatar(
-//                backgroundColor:
-//                    Theme.of(context).platform == TargetPlatform.iOS
-//                        ? Colors.blue
-//                        : Colors.white,
-//                child: Text(
-//                  "M",
-//                  style: TextStyle(fontSize: 40.0),
-//                ),
-//              ),
-//            ),
-//            ListTile(
-//                title: Text(
-//                  "Profile",
-//                ),
-//                onTap: () {
-//                  Navigator.of(context).pop();
-//                  Navigator.of(context).push(MaterialPageRoute(
-//                      builder: (BuildContext context) => BillSpliter()));
-//                  Navigator.of(context).pop();
-//                  Navigator.of(context).push(MaterialPageRoute(
-//                      builder: (BuildContext context) => BillSpliter()));
-//                },
-//                trailing: Icon(Icons.account_box)),
-//            ListTile(
-//              title: Text("Live Location"),
-//              trailing: Icon(Icons.location_on),
-//            ),
-//            ListTile(
-//              title: Text("History"),
-//              trailing: Icon(Icons.history),
-//            ),
-//
-//          ],
-//        ),
-//      ),
 backgroundColor: Colors.white,
       appBar: AppBar(
         //backgroundColor: Color.fromARGB(255, 255, 10, 10),
@@ -111,37 +78,11 @@ backgroundColor: Colors.white,
         centerTitle: true,
 
         backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),
-//        actions: <Widget>[
-//          IconButton(
-//              icon: Icon(Icons.add_to_home_screen),
-//              onPressed: () => debugPrint("hello")),
-//          IconButton(
-//              icon: Icon(Icons.person_add),
-//              onPressed: () => debugPrint("Added")),
-//          IconButton(
-//              icon: Icon(Icons.calendar_today),
-//              onPressed: () => debugPrint("16/2/2020"))
-//        ],
-      ),
 
-//      floatingActionButton: FloatingActionButton(
-//        backgroundColor: Colors.indigoAccent,
-//        child: Icon(Icons.person),
-//        onPressed: () => debugPrint("Add A Kid"),
-//      ),
-//      bottomNavigationBar: BottomNavigationBar(items: [
-//        BottomNavigationBarItem(
-//            icon: Icon(Icons.account_box), title: Text("Account")),
-//        BottomNavigationBarItem(
-//            icon: Icon(Icons.gps_fixed), title: Text("GPS")),
-//        BottomNavigationBarItem(
-//            icon: Icon(Icons.add_box), title: Text("New Device"))
-//      ]),
+      ),
 
       body: SingleChildScrollView(
         child: Column(
-//        mainAxisAlignment: MainAxisAlignment.end,
-//        crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               child: Padding(
@@ -175,7 +116,9 @@ height: 200,
 
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: TextField(
+              child: TextField(inputFormatters: [
+                WhitelistingTextInputFormatter(RegExp("[a-z 0-9 -_. @]")),
+              ],
                 keyboardType: TextInputType.emailAddress,
                 style: TextStyle(
                   color: Colors.black,
@@ -205,7 +148,7 @@ height: 200,
               padding: EdgeInsets.all(30),
               child: TextField(
                 textAlign: TextAlign.start, // vTextAlignment,
-
+                obscureText: _obscureTextLogin,
                 style: TextStyle(
                     fontFamily: "WorkSansSemiBold",
                     fontSize: 16.0,
@@ -221,7 +164,16 @@ height: 200,
                   hintText: "Password",
                   hintStyle:
                   TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 17.0),
-
+                  suffixIcon: GestureDetector(
+                    onTap: _toggleLogin,
+                    child: Icon(
+                      _obscureTextLogin
+                          ? FontAwesomeIcons.eye
+                          : FontAwesomeIcons.eyeSlash,
+                      size: 20.0,
+                      color: Colors.black.withOpacity(0.6),
+                    ),
+                  ),
                 ),
                 onChanged: (val){
                   setState(() {
@@ -231,35 +183,41 @@ height: 200,
               ),
             ),
 
-            RaisedButton(
-              onPressed: () {
-                print("Test Button");
-                onLogIn().whenComplete((){
-                  if(user==null){
-                    return null;
-                  }else{}
-                  if (user.uid!=null){
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            UserPof(
-                              uID: userId,
-                              accountName: widget.accountName,
-                              email: widget.email,
-                              deviceName:widget.deviceName,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: <Widget>[
+              RaisedButton(
+                onPressed: () {
+                  print("Test Button");
+                  onLogIn().whenComplete((){
+                    if(user==null){
+                      return null;
+                    }else{}
+                    if (user.uid!=null){
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              UserPof(
+                                uID: userId,
+                                accountName: widget.accountName,
+                                email: widget.email,
+                                deviceName:widget.deviceName,
 
-                            )
-                    ));
-                  }else{
-                    return null;
-                  }                  print(userId);
-                });
+                              )
+                      ));
+                    }else{
+                      return null;
+                    }                  print(userId);
+                  });
 
-              },
-              child: Text(
-                "Login",
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                },
+                child: Text(
+                  "Login",
+                  style: TextStyle(color: Colors.black, fontSize: 18),
+                ),
               ),
-            ),
+
             RaisedButton(
               onPressed: () {
 
@@ -275,6 +233,9 @@ height: 200,
                 ),
               ),
               color: Colors.white70,
+            ),
+  ],
+    ),
             ),
           ],
         ),

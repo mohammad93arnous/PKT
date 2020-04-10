@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-String key = "AIzaSyB7O7y2OK9V53Wd75pgVmdOQWBausGAVPY";
+String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
 
 class ShowMap extends StatefulWidget {
   @override
@@ -19,7 +19,7 @@ class _ShowMapState extends State<ShowMap> {
   Marker marker; // Marker that mark the location (car icon)
   Circle circle; // Circle Radius
   GoogleMapController _controller; // Google Map Controller for controlling the drag, zoom and unzoom.
-  List<QuerySnapshot> _ListAllDevices;
+//  List<QuerySnapshot> _ListAllDevices;
  static LatLng _center=const LatLng(26.455234, 50.104569);
   @override
   void initState() { // First Load User Location
@@ -143,7 +143,7 @@ class _ShowMapState extends State<ShowMap> {
 
         mapType: _defaultMapType,// Map type satellite or normal ....
         initialCameraPosition: initialLocation, // initial camera until getting user location
-        markers: Set.of((marker != null) ? [marker,marker,marker] : []), // marker if null hide
+        markers: Set.of((marker != null) ? [marker,kid] : []), // marker if null hide
         circles: Set.of((circle != null) ? [circle] : []), // circles if null hide
         onMapCreated: (GoogleMapController controller) { // Map Launch
           _controller = controller; // Controller of google map to be able to drag , zoom and unZoom

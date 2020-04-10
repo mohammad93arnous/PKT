@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flushbar/flushbar.dart';
+//import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +9,7 @@ import 'package:email_validator/email_validator.dart';
 import 'Adding Device.dart';
 import 'RegistertionAccount.dart';
 import 'SnackBar.dart';
-import 'package:flushbar/flushbar_route.dart';
+//import 'package:flushbar/flushbar_route.dart';
 import 'userProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'DeviceInfo.dart';
@@ -46,13 +45,13 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
 
   Future signUp() async {
     if (email == null) {
-      snackError('Email is Empty', context);
+      //snackError('Email is Empty', context);
     } else {
       try {
         user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: email, password: widget.password);
       } catch (e) {
-        snackError(e.toString(), context);
+        //snackError(e.toString(), context);
       }
     }
     saveUser();
@@ -87,16 +86,16 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) => UserPof()));
           } else {
-            return snackError(" Email must be lower case", context);
+            //return snackError(" Email must be lower case", context);
           }
         } else {
-          return snackError("Invalid Email", context);
+         // return snackError("Invalid Email", context);
         }
       } else {
-        snackError('Connection Error', context);
+        //snackError('Connection Error', context);
       }
     } else {
-      snackError('Email Does Not Exist ', context);
+     // snackError('Email Does Not Exist ', context);
     }
   }
 

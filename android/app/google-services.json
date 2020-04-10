@@ -15,13 +15,21 @@
       },
       "oauth_client": [
         {
+          "client_id": "214771093945-id56go41pgnhpfamt08is7qjeqj9jct0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pkt.pktapp",
+            "certificate_hash": "1f3213773e1ba6db9e85c90f92818a59cceb8922"
+          }
+        },
+        {
           "client_id": "214771093945-s5q7b2k608nur5sq6bg2gfo86oq9bo45.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB7O7y2OK9V53Wd75pgVmdOQWBausGAVPY"
+          "current_key": "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY"
         }
       ],
       "services": {

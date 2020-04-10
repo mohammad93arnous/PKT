@@ -1,24 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:passwordfield/passwordfield.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:pktapp/HomePage.dart';
 import 'package:pktapp/flutter_maps/google_map/showMap.dart';
-import 'AUTH/Auth.dart';
 import 'SnackBar.dart';
-import 'package:flushbar/flushbar_route.dart';
 import 'BillSpliter.dart';
-import 'RegistertionAccount.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'DeviceInfo.dart';
 import 'flutter_maps/google_map/showMap.dart';
-import 'LinkWithEmail.dart';
 import 'models/CustomText.dart';
 
 
@@ -119,7 +109,7 @@ showEditUserNameBottomSheet(BuildContext context) {
                     ),
                     onChanged: (value){
                       if(value==null){
-                        snackError('Invalid', context);
+                        //snackError('Invalid', context);
                       }else{
                         setState(() {
                           editedUserName=value;
@@ -207,16 +197,12 @@ showEditUserNameBottomSheet(BuildContext context) {
                   "Profile",
                 ),
                 onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => BillSpliter()));
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => BillSpliter()));
+
                 },
                 trailing: Icon(Icons.account_box)),
             ListTile(
               title: Text("Live Location"),onTap: (){Navigator.of(context).push(MaterialPageRoute(
+
     builder: (BuildContext context) => ShowMap()));},
               trailing: Icon(Icons.location_on),
             ),
