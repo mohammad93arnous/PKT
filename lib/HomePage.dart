@@ -9,16 +9,14 @@ import 'package:pktapp/userProfile.dart';
 import 'AUTH/Auth.dart';
 import 'SnackBar.dart';
 
-
 class HomePage extends StatefulWidget {
-  HomePage({this.accountName,this.email,this.deviceName});
+  HomePage({this.accountName, this.email, this.deviceName});
 
   @override
   State<StatefulWidget> createState() => new _HomePageState();
-   String accountName;
-   String email;
-   String deviceName;
-
+  String accountName;
+  String email;
+  String deviceName;
 }
 
 class _HomePageState extends State<HomePage> {
@@ -31,7 +29,6 @@ class _HomePageState extends State<HomePage> {
   String userId = "";
   FirebaseUser user;
   @override
-
   void _toggleLogin() {
     setState(() {
       _obscureTextLogin = !_obscureTextLogin;
@@ -44,13 +41,13 @@ class _HomePageState extends State<HomePage> {
 
   Future onLogIn() async {
     try {
-       user=await FirebaseAuth.instance.signInWithEmailAndPassword(email: email,password: password);
+      user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
       if (user.uid.length > 0 && user.uid != null) {
-        if(user.uid==null){
+        if (user.uid == null) {
           print('1');
-        }else{
+        } else {
           setState(() {
-            userId=user.uid;
+            userId = user.uid;
           });
           //Main Secreen
         }
@@ -65,22 +62,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         //backgroundColor: Color.fromARGB(255, 255, 10, 10),
         title: Text(
           "Parental Kids Tracker",
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 30.0,
-              color: Colors.amberAccent.shade700),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30.0, color: Colors.amberAccent.shade700),
         ),
         centerTitle: true,
 
         backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),
-
       ),
-
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -89,7 +81,7 @@ backgroundColor: Colors.white,
                 padding: const EdgeInsets.all(20.0),
                 child: Image.asset('assets/images/family.png'),
               ),
-height: 200,
+              height: 200,
             ),
 //           InkWell(
 //             child: Text("Add A Device", style: TextStyle(
@@ -116,25 +108,18 @@ height: 200,
 
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: TextField(inputFormatters: [
-                WhitelistingTextInputFormatter(RegExp("[a-z 0-9 -_. @]")),
-              ],
+              child: TextField(
+                inputFormatters: [
+                  WhitelistingTextInputFormatter(RegExp("[a-z 0-9 -_. @]")),
+                ],
                 keyboardType: TextInputType.emailAddress,
                 style: TextStyle(
                   color: Colors.black,
                 ),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(2),
-                        borderSide: BorderSide(width: 2, color: Colors.green)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(width: 2, color: Colors.green)),
-                    hintText: "Enter Your sEmail ",
-                    prefixIcon: Icon(Icons.email)),
-                onChanged: (val){
+                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(2), borderSide: BorderSide(width: 2, color: Colors.green)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0), borderSide: BorderSide(width: 2, color: Colors.green)), hintText: "Enter Your sEmail ", prefixIcon: Icon(Icons.email)),
+                onChanged: (val) {
                   setState(() {
-                    email=val;
+                    email = val;
                   });
                 },
               ),
@@ -149,35 +134,27 @@ height: 200,
               child: TextField(
                 textAlign: TextAlign.start, // vTextAlignment,
                 obscureText: _obscureTextLogin,
-                style: TextStyle(
-                    fontFamily: "WorkSansSemiBold",
-                    fontSize: 16.0,
-                    color: Colors.black), //Colors.black),
+                style: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 16.0, color: Colors.black), //Colors.black),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderSide: BorderSide(width: 10, color: Colors.green),
                     borderRadius: BorderRadius.circular(1.0),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(1.0),
-                      borderSide: BorderSide(width: 0.5, color: Colors.green)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(width: 0.5, color: Colors.green)),
                   hintText: "Password",
-                  hintStyle:
-                  TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 17.0),
+                  hintStyle: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 17.0),
                   suffixIcon: GestureDetector(
                     onTap: _toggleLogin,
                     child: Icon(
-                      _obscureTextLogin
-                          ? FontAwesomeIcons.eye
-                          : FontAwesomeIcons.eyeSlash,
+                      _obscureTextLogin ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
                       size: 20.0,
                       color: Colors.black.withOpacity(0.6),
                     ),
                   ),
                 ),
-                onChanged: (val){
+                onChanged: (val) {
                   setState(() {
-                    password=val;
+                    password = val;
                   });
                 },
               ),
@@ -186,56 +163,47 @@ height: 200,
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: <Widget>[
-              RaisedButton(
-                onPressed: () {
-                  print("Test Button");
-                  onLogIn().whenComplete((){
-                    if(user==null){
-                      return null;
-                    }else{}
-                    if (user.uid!=null){
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              UserPof(
-                                uID: userId,
-                                accountName: widget.accountName,
-                                email: widget.email,
-                                deviceName:widget.deviceName,
-
-                              )
-                      ));
-                    }else{
-                      return null;
-                    }                  print(userId);
-                  });
-
-                },
-                child: Text(
-                  "Login",
-                  style: TextStyle(color: Colors.black, fontSize: 18),
-                ),
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {
+                      print("Test Button");
+                      onLogIn().whenComplete(() {
+                        if (user == null) {
+                          return null;
+                        } else {}
+                        if (user.uid != null) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) => UserPof(
+                                    uID: userId,
+                                  )));
+                        } else {
+                          return null;
+                        }
+                        print(userId);
+                      });
+                    },
+                    child: Text(
+                      "Login",
+                      style: TextStyle(color: Colors.black, fontSize: 18),
+                    ),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => DeviceInfo()));
+                      // Calling SnackBar with Error Text
+                    },
+                    child: Text(
+                      'Register',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    ),
+                    color: Colors.white70,
+                  ),
+                ],
               ),
-
-            RaisedButton(
-              onPressed: () {
-
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => DeviceInfo()));
-               // Calling SnackBar with Error Text
-              },
-              child: Text(
-                'Register',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                ),
-              ),
-              color: Colors.white70,
-            ),
-  ],
-    ),
             ),
           ],
         ),

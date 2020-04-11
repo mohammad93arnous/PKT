@@ -69,13 +69,10 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
           'Email': email,
           'UserID': userID,
           'Devices': {
-            '1': {
-              'DeviceLocations': {
-                'Location1': {
-                  'Altitude': ' ',
-                  'Latitude': '',
-                },
-              },
+            '0': {
+              'Altitude': ' ',
+              'Latitude': '',
+              'DistanceAway': '',
               'DeviceName': widget.deviceName,
               'DeviceSerialNumber': widget.deviceSerial,
             }
