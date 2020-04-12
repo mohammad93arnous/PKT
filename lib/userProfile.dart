@@ -34,18 +34,20 @@ class _UserPofState extends State<UserPof> {
   FirebaseUser user;
   String editedUserName;
   ////// Variables filled from FB//////
-  LinkedHashMap<String,dynamic> fbDevices;
-  LinkedHashMap<String,dynamic> fbDevicesCasted;
+  LinkedHashMap<String, dynamic> fbDevices;
+  LinkedHashMap<String, dynamic> fbDevicesCasted;
   @override
   void initState() {
     setState(() {
       uID = widget.uID;
     });
-    getUserInfo();
+    getUserInfo().whenComplete(() {
+      getDevicesData(userData);
+    });
     super.initState();
   }
 
-  getUserInfo() async {
+  Future getUserInfo() async {
     userData = await Firestore.instance.collection('UsersAccount').document(uID).get().whenComplete(() {
       setState(() {
         dataFetched = true;
@@ -154,24 +156,24 @@ class _UserPofState extends State<UserPof> {
 
 // get devices list from FB through UserData Variable
   getDevicesData(DocumentSnapshot data) async {
-      setState(() {
-        print('SetState Devices');
-        fbDevices = data.data['Devices'];
-        fbDevicesCasted=fbDevices['1'];
+    if (data == null) {
+      getUserInfo().whenComplete((){
+        getDevicesData(userData);
       });
-      print(fbDevices.length.toString());
-      print(fbDevices.toString());
-      print(fbDevices['1']['DeviceName']);
-//      for(int i;i<fbDevices.length;i++){
-//
-//      }
-
-      // In case of no devices has been added
+    } else {
+      setState(() {
+       // print('SetState Devices');
+        fbDevices = data.data['Devices'];
+        fbDevicesCasted = fbDevices['1'];
+      });
+//      print(fbDevices.length.toString());
+//      print(fbDevices.toString());
+//      print(fbDevices['1']['DeviceName']);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       key: _scaffoldKey,
       // Key For calling Scaffold to show SnackBar
@@ -266,10 +268,11 @@ class _UserPofState extends State<UserPof> {
       bottomNavigationBar: BottomNavigationBar(items: [
         BottomNavigationBarItem(
             icon: InkWell(
-                onTap: (){
+                onTap: () {
                   getUserInfo();
                 },
-                child: Icon(Icons.account_box)), title: Text("Account")),
+                child: Icon(Icons.account_box)),
+            title: Text("Account")),
         BottomNavigationBarItem(
           icon: InkWell(
               onTap: () {
@@ -285,113 +288,101 @@ class _UserPofState extends State<UserPof> {
   }
 
   Widget userBody() {
-    return Container(
-      height: 624,
-      child: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: ListView.builder(
-              shrinkWrap: true,
-             itemCount: fbDevices.length,
-             itemBuilder: (context,i){
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Container(
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.lightGreen.shade300.withOpacity(0.70),
-                      border: Border.all(color: Colors.white54, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(16)),
+    if (fbDevices == null) {
+      return Container();
+    } else {
+      return Container(
+        height: 624,
+        child: ListView(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: fbDevices.length,
+                itemBuilder: (context, i) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Container(
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.lightGreen.shade300.withOpacity(0.70),
+                        border: Border.all(color: Colors.white54, width: 1),
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                      ),
+                      child: Stack(
+                        children: <Widget>[
+                          Positioned(
+                            top: 15,
+                            left: 9,
+                            child: CircleAvatar(
+                              radius: 25.0,
+                              backgroundImage: AssetImage('assets/band.png'),
+                            ),
+                          ),
+                          Positioned(
+                            top: 8,
+                            left: 160,
+                            child: Text(
+                              fbDevices['$i']['DeviceName'].toString(),
+                              style: TextStyle(color: Colors.black, fontSize: 19, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Positioned(
+                            top: 35,
+                            left: 75,
+                            child: Text(
+                              'Distance From You: ',
+                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Positioned(
+                            top: 35,
+                            left: 212,
+                            child: Text(
+                              fbDevices['$i']['DistanceAway'].toString() + ' meters',
+                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          Positioned(
+                            top: 55,
+                            left: 75,
+                            child: Text(
+                              'Loctation:',
+                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          Positioned(
+                            top: 55,
+                            left: 150,
+                            child: Text(
+                              'Dammam,Alsalam',
+                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          Positioned(
+                              top: 30,
+                              left: 370,
+                              child: InkWell(
+                                onTap: () {
+                                  print('Arrow Tapped');
+                                },
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
+                              )),
+                        ],
+                      ),
                     ),
-                    child: Stack(
-                      children: <Widget>[
-                        Positioned(
-                          top: 15,
-                          left: 9,
-                          child: CircleAvatar(
-                            radius: 25.0,
-                            backgroundImage: AssetImage('assets/band.png'),
-                          ),
-                        ),
-                        Positioned(
-                          top: 8,
-                          left: 160,
-                          child: Text(fbDevices['$i']['DeviceName'].toString(),
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 19,
-                                fontWeight: FontWeight.w500
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 35,
-                          left: 75,
-                          child: Text('Distance From You: ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 35,
-                          left: 212,
-                          child: Text(fbDevices['$i']['DistanceAway'].toString()+' meters',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 55,
-                          left: 75,
-                          child: Text('Loctation:',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 55,
-                          left: 150,
-                          child: Text('Dammam,Alsalam',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                            top: 30,
-                            left: 370,
-                            child: InkWell(
-                              onTap: (){
-                                print('Arrow Tapped');
-                              },
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                                size: 20,
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-             },
-            ),
-          )
-        ],
-      ),
-    );
+                  );
+                },
+              ),
+            )
+          ],
+        ),
+      );
+    }
   }
 }
