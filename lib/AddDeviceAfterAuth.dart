@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -6,17 +7,18 @@ import 'SnackBar.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'RegistertionAccount.dart';
 import 'main.dart';
+import 'userProfile.dart';
 
-class DeviceInfo extends StatefulWidget {
-  DeviceInfo({this.result,this.uID});
+class AddDeviceAfterAuth extends StatefulWidget {
+  AddDeviceAfterAuth({this.result,this.uID});
   @override
-  State<StatefulWidget> createState() => new _DeviceInfoState();
+  State<StatefulWidget> createState() => new _AddDeviceAfterAuthState();
   String result;
   String uID;
 
 }
 
-class _DeviceInfoState extends State<DeviceInfo> {
+class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
 
 
   bool _obscureTextLogin = true;
@@ -29,6 +31,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
   String deviceName = '';
   String deviceSerial = '';
   String qrResult;
+
 
   @override
   void initState() {
@@ -86,7 +89,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
   deviSiralValidation() {
     if(result==null){
       if (deviceSer.text == null || deviceSerial.length <= 3) {
-       // snackError('Serial Number Must Contain Text Only', context);
+        // snackError('Serial Number Must Contain Text Only', context);
         deviceSerialValidated = false;
       } else if (deviceSer.text.contains('-,*,/,+,=,(,),%,@,!', 0) == true) {
         //snackError('Serial Number Must Contain Text Only', context);
@@ -141,7 +144,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                   color: Colors.black,
                 ),
                 decoration: InputDecoration(
-                    //should be all small
+                  //should be all small
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
@@ -168,7 +171,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                   color: Colors.black,
                 ),
                 decoration: InputDecoration(
-                    //should be all small
+                  //should be all small
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
@@ -236,7 +239,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      'Back',
+                      'Cancel',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
@@ -247,10 +250,6 @@ class _DeviceInfoState extends State<DeviceInfo> {
                   RaisedButton(
                     onPressed: () {
                       validatingBeforeNavigate();
-                      print('1 $deviceName');
-                      print('2 $deviceNameP');
-                      print('3 $deviceSerial');
-                      print('2 '+deviceSer.text);
                     },
                     child: Text(
                       'Connect',
@@ -280,59 +279,88 @@ class _DeviceInfoState extends State<DeviceInfo> {
       if (ex.code == BarcodeScanner.CameraAccessDenied) {
         //snackError('Camera permission was denied', context);
       } else {
-     //   snackError('Unknown Error', context);
+        //   snackError('Unknown Error', context);
       }
     } on FormatException {
-   //  snackError('You pressed the back button before scanning anything', context);
+        //snackError('You pressed the back button before scanning anything', context);
     } catch (ex) {
-   //   snackError('Unknown Error', context);
+         //snackError('Unknown Error', context);
     }
     //checkIfQRScanned();
   }
   Future validatingBeforeNavigate() {
     print(deviceNameValidated.toString());
     print(deviceSerialValidated.toString());
-  if(deviceNameP!=null && deviceSer.text!=null){
-    print('1');
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => RegistertionAccount(
-          deviceName: deviceNameP,
-          deviceSerial: deviceSer.text,
-          //result: widget.result,
-          //ToDO:
-        )));
-  }else{
-    print('else');
-    if (deviceName == null) {
-     // snackError('Device Name cannot be empty', context);
-    } else if (deviceSerial == null|| result==null) {
-    //  snackError('Device Serial Number cannot be empty', context);
-    } else if (deviceName == null||deviceNameP==null) {
-    //  snackError('Re-Password cannot be empty', context);
-    } else {
-      deviNameValidation();
-      deviSiralValidation();
-
-      if (deviceNameValidated == false && deviceSerialValidated == false) {
-        setState(() {
-          deviceNameValidated = false;
-          deviceSerialValidated = false;
-        });
+    if(deviceNameP!=null && deviceSer.text!=null){
+      validateSerialNumber(deviceNameP,deviceSer.text);
+    }else{
+      print('else');
+      if (deviceName == null) {
+        // snackError('Device Name cannot be empty', context);
+      } else if (deviceSerial == null|| result==null) {
+        //  snackError('Device Serial Number cannot be empty', context);
+      } else if (deviceName == null||deviceNameP==null) {
+        //  snackError('Re-Password cannot be empty', context);
       } else {
-        print(deviceNameValidated.toString());
-        print(deviceSerialValidated.toString());
+        deviNameValidation();
+        deviSiralValidation();
+
         if (deviceNameValidated == false && deviceSerialValidated == false) {
+          setState(() {
+            deviceNameValidated = false;
+            deviceSerialValidated = false;
+          });
         } else {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => RegistertionAccount(
-                deviceName: deviceName,
-                deviceSerial: deviceSerial,
-                //result: widget.result,
-                //ToDo:
-              )));
+          print(deviceNameValidated.toString());
+          print(deviceSerialValidated.toString());
+          if (deviceNameValidated == false && deviceSerialValidated == false) {
+          } else {
+            validateSerialNumber(deviceName,deviceSerial);
+
+          }
         }
       }
     }
   }
+
+  Future validateSerialNumber(String deviceName,String serialNumber)async {
+    await Firestore.instance.collection('SerialNumbers').document(deviceSerial).get().then((serialData){
+      if(serialData.exists==false){
+        //Serial Not Found
+        print('Serial Not Found');
+      }else{
+        if(serialData.data['SerialReserved']==true){
+          print('serial Found But Associated to another user');
+          //serial Found But Associated to another user
+        }else{
+          print('Serial Found and free to use');
+          //Serial Found and free to use
+          addDevice(serialNumber,deviceName);
+        }
+      }
+    });
+  }
+
+  Future addDevice(String serial,String deviceName)async{
+    int distanceAway=0;
+    await Firestore.instance.collection('Devices').document(serial).setData(({
+      'DeviceName':deviceName,
+      'DeviceSerialNumber':serial,
+      'DistanceAway':distanceAway,
+      'Altitude':' ',
+      'Latitude':' ',
+      'UID':widget.uID,
+    })).whenComplete((){
+      updateSerial(serial).whenComplete((){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => UserPof(uID: widget.uID,)));
+      });
+    });
+  }
+
+  Future updateSerial(String serial)async{
+    await Firestore.instance.collection('SerialNumbers').document(serial).updateData(({
+      'SerialReserved':true,
+      'ReservedUID':widget.uID,
+    }));
   }
 }

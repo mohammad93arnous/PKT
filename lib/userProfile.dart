@@ -6,6 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:pktapp/AddDeviceAfterAuth.dart';
+import 'package:pktapp/Adding%20Device.dart';
+import 'package:pktapp/DeviceInfo.dart';
 import 'package:pktapp/HomePage.dart';
 import 'package:pktapp/flutter_maps/google_map/showMap.dart';
 import 'SnackBar.dart';
@@ -33,9 +36,9 @@ class _UserPofState extends State<UserPof> {
   DocumentSnapshot userData;
   FirebaseUser user;
   String editedUserName;
+  QuerySnapshot deviceData;
   ////// Variables filled from FB//////
-  LinkedHashMap<String, dynamic> fbDevices;
-  LinkedHashMap<String, dynamic> fbDevicesCasted;
+
   @override
   void initState() {
     setState(() {
@@ -161,14 +164,12 @@ class _UserPofState extends State<UserPof> {
         getDevicesData(userData);
       });
     } else {
-      setState(() {
-       // print('SetState Devices');
-        fbDevices = data.data['Devices'];
-        fbDevicesCasted = fbDevices['1'];
-      });
-//      print(fbDevices.length.toString());
-//      print(fbDevices.toString());
-//      print(fbDevices['1']['DeviceName']);
+     await Firestore.instance.collection('Devices')
+         .where('UID',isEqualTo: uID).getDocuments().then((val){
+           setState(() {
+             deviceData=val;
+           });
+     });
     }
   }
 
@@ -281,14 +282,23 @@ class _UserPofState extends State<UserPof> {
               child: Icon(Icons.gps_fixed)),
           title: Text("GPS"),
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.add_box), title: Text("New Device"))
+        BottomNavigationBarItem(
+            icon: InkWell(
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => AddDeviceAfterAuth(
+                  uID: uID,
+                )));
+              },
+                child: Icon(Icons.add_box)),
+            title: Text("New Device")
+        )
       ]),
       body: userBody(),
     );
   }
 
   Widget userBody() {
-    if (fbDevices == null) {
+    if (deviceData == null) {
       return Container();
     } else {
       return Container(
@@ -299,7 +309,7 @@ class _UserPofState extends State<UserPof> {
               padding: const EdgeInsets.all(4.0),
               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: fbDevices.length,
+                itemCount: deviceData.documents.length,
                 itemBuilder: (context, i) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10),
@@ -324,7 +334,7 @@ class _UserPofState extends State<UserPof> {
                             top: 8,
                             left: 160,
                             child: Text(
-                              fbDevices['$i']['DeviceName'].toString(),
+                              deviceData.documents[i].data['DeviceName'].toString(),
                               style: TextStyle(color: Colors.black, fontSize: 19, fontWeight: FontWeight.w500),
                             ),
                           ),
@@ -340,7 +350,7 @@ class _UserPofState extends State<UserPof> {
                             top: 35,
                             left: 212,
                             child: Text(
-                              fbDevices['$i']['DistanceAway'].toString() + ' meters',
+                              deviceData.documents[i].data['DistanceAway'].toString() + ' meters',
                               style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
                             ),
                           ),

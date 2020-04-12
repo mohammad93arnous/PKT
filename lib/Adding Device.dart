@@ -10,10 +10,10 @@ import 'main.dart';
 import 'RegistertionAccount.dart';
 
 class AddingDevice extends StatefulWidget {
+  AddingDevice({this.uID});
   @override
-  AddingDeviceState createState() {
-    return new AddingDeviceState();
-  }
+  AddingDeviceState createState() {return new AddingDeviceState();}
+  String uID;
 }
 
 class AddingDeviceState extends State<AddingDevice> {
