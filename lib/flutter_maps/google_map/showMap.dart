@@ -202,6 +202,10 @@ class _ShowMapState extends State<ShowMap> {
   Marker kid=Marker(markerId: MarkerId("child"),position:_center ,infoWindow: InfoWindow(title: "Moh",snippet: ""),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta));
 
+  List<Marker>lisiOfMarker=<Marker>[
+
+
+  ];
 
 }//.............Done ...................
 

@@ -49,7 +49,7 @@ packages:
       name: barcode_scan
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -203,7 +203,7 @@ packages:
       name: flushbar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.0"
+    version: "1.9.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -406,15 +406,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  map_view:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "5b631c499783936dfc462039274a6f5c59323068"
-      url: "git://github.com/Eimji/flutter_google_map_view.git"
-    source: git
-    version: "0.0.15"
   matcher:
     dependency: transitive
     description:
@@ -526,7 +517,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.4"
+    version: "4.0.5"
   pub_semver:
     dependency: transitive
     description:
@@ -609,22 +600,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
-  uri:
-    dependency: transitive
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "04417bbc6b365cfd69a0009dfa4b358432f6e8bd"
-      url: "git://github.com/Eimji/uri.dart"
-    source: git
-    version: "0.11.3"
-  utf:
-    dependency: transitive
-    description:
-      name: utf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.9.0+5"
   vector_math:
     dependency: transitive
     description:

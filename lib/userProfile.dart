@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,12 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:pktapp/AddDeviceAfterAuth.dart';
-import 'package:pktapp/Adding%20Device.dart';
-import 'package:pktapp/DeviceInfo.dart';
 import 'package:pktapp/HomePage.dart';
 import 'package:pktapp/flutter_maps/google_map/showMap.dart';
 import 'SnackBar.dart';
-import 'BillSpliter.dart';
 import 'flutter_maps/google_map/showMap.dart';
 import 'models/CustomText.dart';
 
@@ -117,7 +112,7 @@ class _UserPofState extends State<UserPof> {
                       ),
                       onChanged: (value) {
                         if (value == null) {
-                          //snackError('Invalid', context);
+                          snackError('Invalid', context);
                         } else {
                           setState(() {
                             editedUserName = value;
@@ -178,7 +173,9 @@ class _UserPofState extends State<UserPof> {
     return Scaffold(
       key: _scaffoldKey,
       // Key For calling Scaffold to show SnackBar
+
       drawer: Drawer(
+
         child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(

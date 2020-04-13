@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
         }
       }
     } catch (e) {
-      //snackError('Email or Password Invalid',context);
+      snackError('Email or Password Invalid',context);
     }
     return null;
   }

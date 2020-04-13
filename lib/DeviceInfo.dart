@@ -65,11 +65,11 @@ class _DeviceInfoState extends State<DeviceInfo> {
   deviNameValidation() {
     if(deviceNameP==null){
       if (deviceAccountName.text == null || deviceName.length <= 3) {
-        //snackError('Name Must Contain Text Only', context);
+        snackError('Name Must Contain Text Only', context);
         deviceNameValidated = false;
       } else if (deviceAccountName.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
           true) {
-        //snackError('Name Must Contain Text Only', context);
+        snackError('Name Must Contain Text Only', context);
         deviceNameValidated = false;
       } else {
         setState(() {
@@ -86,10 +86,10 @@ class _DeviceInfoState extends State<DeviceInfo> {
   deviSiralValidation() {
     if(result==null){
       if (deviceSer.text == null || deviceSerial.length <= 3) {
-       // snackError('Serial Number Must Contain Text Only', context);
+        snackError('Serial Number Must Contain Text Only', context);
         deviceSerialValidated = false;
       } else if (deviceSer.text.contains('-,*,/,+,=,(,),%,@,!', 0) == true) {
-        //snackError('Serial Number Must Contain Text Only', context);
+        snackError('Serial Number Must Contain Text Only', context);
         deviceSerialValidated = false;
       } else {
         setState(() {
@@ -278,14 +278,14 @@ class _DeviceInfoState extends State<DeviceInfo> {
       checkIfQRScanned();
     } on PlatformException catch (ex) {
       if (ex.code == BarcodeScanner.CameraAccessDenied) {
-        //snackError('Camera permission was denied', context);
+        snackError('Camera permission was denied', context);
       } else {
-     //   snackError('Unknown Error', context);
+        snackError('Unknown Error', context);
       }
     } on FormatException {
-   //  snackError('You pressed the back button before scanning anything', context);
+     snackError('You pressed the back button before scanning anything', context);
     } catch (ex) {
-   //   snackError('Unknown Error', context);
+      snackError('Unknown Error', context);
     }
     //checkIfQRScanned();
   }
@@ -304,11 +304,11 @@ class _DeviceInfoState extends State<DeviceInfo> {
   }else{
     print('else');
     if (deviceName == null) {
-     // snackError('Device Name cannot be empty', context);
+      snackError('Device Name cannot be empty', context);
     } else if (deviceSerial == null|| result==null) {
-    //  snackError('Device Serial Number cannot be empty', context);
+      snackError('Device Serial Number cannot be empty', context);
     } else if (deviceName == null||deviceNameP==null) {
-    //  snackError('Re-Password cannot be empty', context);
+      snackError('Re-Password cannot be empty', context);
     } else {
       deviNameValidation();
       deviSiralValidation();
