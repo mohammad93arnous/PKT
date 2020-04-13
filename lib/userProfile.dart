@@ -31,7 +31,7 @@ class _UserPofState extends State<UserPof> {
   DocumentSnapshot userData;
   FirebaseUser user;
   String editedUserName;
-  QuerySnapshot deviceData;
+  QuerySnapshot deviceFBData;
   ////// Variables filled from FB//////
 
   @override
@@ -159,12 +159,17 @@ class _UserPofState extends State<UserPof> {
         getDevicesData(userData);
       });
     } else {
-     await Firestore.instance.collection('Devices')
-         .where('UID',isEqualTo: uID).getDocuments().then((val){
-           setState(() {
-             deviceData=val;
-           });
-     });
+      Stream<QuerySnapshot> deviceData = Firestore.instance.collection('Devices')
+         .where('UID',isEqualTo: uID).snapshots();
+      deviceData.listen((QuerySnapshot devData){
+        if(devData.documents==null){
+          // Do Nothing
+        }else{
+          setState(() {
+            deviceFBData=devData;
+          });
+        }
+      });
     }
   }
 
@@ -295,7 +300,7 @@ class _UserPofState extends State<UserPof> {
   }
 
   Widget userBody() {
-    if (deviceData == null) {
+    if (deviceFBData == null) {
       return Container();
     } else {
       return Container(
@@ -306,7 +311,7 @@ class _UserPofState extends State<UserPof> {
               padding: const EdgeInsets.all(4.0),
               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: deviceData.documents.length,
+                itemCount: deviceFBData.documents.length,
                 itemBuilder: (context, i) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10),
@@ -331,7 +336,7 @@ class _UserPofState extends State<UserPof> {
                             top: 8,
                             left: 160,
                             child: Text(
-                              deviceData.documents[i].data['DeviceName'].toString(),
+                              deviceFBData.documents[i].data['DeviceName'].toString(),
                               style: TextStyle(color: Colors.black, fontSize: 19, fontWeight: FontWeight.w500),
                             ),
                           ),
@@ -347,7 +352,7 @@ class _UserPofState extends State<UserPof> {
                             top: 35,
                             left: 212,
                             child: Text(
-                              deviceData.documents[i].data['DistanceAway'].toString() + ' meters',
+                              deviceFBData.documents[i].data['DistanceAway'].toString() + ' meters',
                               style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
                             ),
                           ),
