@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +10,8 @@ import 'package:pktapp/DeviceInfo.dart';
 import 'package:pktapp/userProfile.dart';
 import 'AUTH/Auth.dart';
 import 'SnackBar.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';//new
+import 'dart:async';//new
 
 class HomePage extends StatefulWidget {
   HomePage({this.accountName, this.email, this.deviceName});
@@ -20,7 +24,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  new FlutterLocalNotificationsPlugin();
+
   final _scaffoldKey = GlobalKey(); // Scaffold Key
+  var mymap = {};
+  var title = '';
+  var body = {};
+  var mytoken = '';
+
 
   bool _obscureTextLogin = true;
   Auth auth = new Auth();
@@ -37,8 +51,72 @@ class _HomePageState extends State<HomePage> {
 
   void initState() {
     super.initState();
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var android = new AndroidInitializationSettings('mipmap/ic_launcher');
+    var ios = new IOSInitializationSettings();
+    var platform = new InitializationSettings(android, ios);
+    flutterLocalNotificationsPlugin.initialize(platform);
+    firebaseMessaging.configure(
+        onLaunch: (Map<String , dynamic> msg){
+          print("onLaunch called ${(msg)}");
+        },
+        onResume: (Map<String , dynamic> msg){
+          print("onResume called ${(msg)}");
+        },
+        onMessage:  (Map<String , dynamic> msg){
+          print("onResume called ${(msg)}");
+          mymap = msg;
+          showNotification(msg);
+        }
+    );
+
+    firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true , alert: true ,badge: true));
+    firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings setting){
+      print("onIosSettingsRegistered");
+    });
+    firebaseMessaging.getToken().then((token){
+      update(token);
+    });
   }
 
+  showNotification(Map<String , dynamic> msg) async{
+    var android = new AndroidNotificationDetails(
+        "1", "channelName", "channelDescription");
+    var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android,iOS);
+
+    msg.forEach((k,v){
+      title = k;
+      body = v;
+      setState(() {
+
+      });
+    });
+
+    await flutterLocalNotificationsPlugin.show(0, "${msg.keys}", "${msg.values}", platform);
+
+  }
+
+
+  update(String token ){
+    print(token);
+    DatabaseReference databaseReference = new FirebaseDatabase().reference();
+    databaseReference.child('fcm-token/$token').set({"token":token});
+    mytoken = token;
+    setState(() {
+
+    });
+  }
+  // ignore: missing_return
+//  Future selectNotification(String payload){  //for local notif
+//     debugPrint('print payload : $payload');
+//    showDialog(context: context,builder: (_)=> AlertDialog(
+//      title: new Text('Notification') ,
+//      content: new Text('$payload'),
+//    ),);
+//  }
   Future onLogIn() async {
     try {
       user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
@@ -192,6 +270,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => DeviceInfo()));
                       // Calling SnackBar with Error Text
+
                     },
                     child: Text(
                       'Register',
@@ -210,6 +289,17 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+//  showNotification() async{ //for local notif
+//    var android = new AndroidNotificationDetails(
+//        "channelId", "channelName", "channelDescription"
+//        ,priority: Priority.High,importance: Importance.Max);
+//    var iOS = new IOSNotificationDetails();
+//
+//    var platform = new NotificationDetails(android, iOS);
+//    await flutterLocalNotificationsPlugin.show(
+//        0, 'PKT APP', 'Kid cross the aeria' , platform,payload: 'Track your Kid');
+//
+//  }
 }
 
 //
