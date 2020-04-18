@@ -14,11 +14,14 @@ class ShowMap extends StatefulWidget {
   _ShowMapState createState() => _ShowMapState();
 }
 class _ShowMapState extends State<ShowMap> {
+
   StreamSubscription _locationSubscription; //Location Values as Sub
   Location _locationTracker = Location(); // Location Updater Per Seconds Variable of type location that hold Lat and Long
   Marker marker; // Marker that mark the location (car icon)
   Circle circle; // Circle Radius
   GoogleMapController _controller; // Google Map Controller for controlling the drag, zoom and unzoom.
+  static double Lat=26.455234;
+  static double Long=50.104569;
 //  List<QuerySnapshot> _ListAllDevices;
  static LatLng _center=const LatLng(26.455234, 50.104569);
   @override

@@ -8,6 +8,7 @@ import 'package:pktapp/AddDeviceAfterAuth.dart';
 import 'package:pktapp/HomePage.dart';
 import 'package:pktapp/flutter_maps/google_map/showMap.dart';
 import 'SnackBar.dart';
+import 'flutter_maps/google_map/ShowGivinDeviceMap.dart';
 import 'flutter_maps/google_map/showMap.dart';
 import 'models/CustomText.dart';
 
@@ -279,7 +280,7 @@ class _UserPofState extends State<UserPof> {
         BottomNavigationBarItem(
           icon: InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowMap()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowGivenDeviceMap()));
               },
               child: Icon(Icons.gps_fixed)),
           title: Text("GPS"),
