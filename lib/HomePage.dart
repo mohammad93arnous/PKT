@@ -109,14 +109,6 @@ class _HomePageState extends State<HomePage> {
 
     });
   }
-  // ignore: missing_return
-//  Future selectNotification(String payload){  //for local notif
-//     debugPrint('print payload : $payload');
-//    showDialog(context: context,builder: (_)=> AlertDialog(
-//      title: new Text('Notification') ,
-//      content: new Text('$payload'),
-//    ),);
-//  }
   Future onLogIn() async {
     try {
       user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
@@ -245,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   RaisedButton(
                     onPressed: () {
-                      print("Test Button");
+
                       onLogIn().whenComplete(() {
                         if (user == null) {
                           return null;

@@ -22,13 +22,31 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   final Firestore _database = Firestore.instance;
   Completer<GoogleMapController> _controller = Completer();
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-
+  BitmapDescriptor pinLocationIcon;
   @override
   void initState(){
     crearmarcadores();
     super.initState();
+    setCustomMapPin();
+  }
+  void setCustomMapPin() async {
+    pinLocationIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 1.0),
+        'assets/map-marker.png');
+  }
+  MapType _defaultMapType = MapType.normal;
+
+  void _changeMapType() {
+    setState(() {
+      _defaultMapType = _defaultMapType == MapType.normal ? MapType.normal : MapType.normal;
+    });
   }
 
+  void _changeMapType2() {
+    setState(() {
+      _defaultMapType = _defaultMapType == MapType.satellite ? MapType.satellite : MapType.satellite;
+    });
+  }
   crearmarcadores() async{
     await _database.collection('Devices')
         .getDocuments().then((docs) {
@@ -45,7 +63,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
 
     // creating a new MARKER
     final Marker marker = Marker(
-      markerId: markerId,
+      markerId: markerId,icon:pinLocationIcon ,
       position: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
       infoWindow: InfoWindow(title: lugar['DeviceName']),
     );
@@ -65,7 +83,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: GoogleMap(
-        mapType: MapType.hybrid,
+        mapType:_defaultMapType,
         initialCameraPosition: _kGooglePlex,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
@@ -73,11 +91,28 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
         myLocationEnabled: true,
         markers: Set<Marker>.of(markers.values),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _currentLocation,
-        label: Text('Your Location'),
-        icon: Icon(Icons.location_on),
-      ),
+//      floatingActionButton: FloatingActionButton.extended(
+//        onPressed: _currentLocation,
+//        label: Text('Your Location'),
+//        icon: Icon(Icons.location_on),
+//      ),
+      floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
+        children: [
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.location_searching),
+              label: "current location",
+              onTap: ()=>_currentLocation()),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.map),
+              label: "Normal Map",
+              onTap: ()=>_changeMapType()
+          ),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.map),
+              label: "Satellite Map",
+              onTap: ()=>_changeMapType2()
+          ),
+        ],) ,
     );
   }
 

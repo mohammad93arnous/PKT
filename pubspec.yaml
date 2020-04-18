@@ -87,6 +87,11 @@ flutter:
     - assets/destination_map_marker.png
     - assets/band.png
     - assets/placeholder1.png
+    - assets/wrist.png
+    - assets/wrist2.png
+    - assets/band2.png
+    - assets/map-marker.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

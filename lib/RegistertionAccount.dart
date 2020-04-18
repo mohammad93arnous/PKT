@@ -281,13 +281,10 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     print(passValidated.toString());
     if (accountName == null) {
      return snackError('Account Name cannot be empty', context);
-
     }else if (loginAccountName.text.contains('- * / + = ( ) % @ !', 0) ==
         true) {
        return snackError('Name Must Contain Text Only', context);
-
     }
-
     else if (_loginPassword == null) {
       snackError('Password cannot be empty', context);
       passValidated=false;//new
@@ -297,23 +294,16 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     } else if (loginPasswordController.text != loginRePasswordController.text &&
         loginRePasswordController.text != loginPasswordController.text) {
       snackError('Passwoed is not matched', context);
-
     }
-
     else {
       accountNameValidation();
       passwordValidation();
-
       if (userNameValidated == false && passValidated == false) {
         setState(() {
           userNameValidated = false;
           passValidated = false;
         });
       } else {
-//        loginAccountName.clear();
-//        loginPasswordController.clear();
-//        loginRePasswordController.clear();
-
         print(userNameValidated.toString());
         print(passValidated.toString());
         if (userNameValidated == false && passValidated == false) {
