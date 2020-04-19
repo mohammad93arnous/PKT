@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart'as prefix0;
+import 'package:location/location.dart';
 import 'SnackBar.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'RegistertionAccount.dart';
@@ -31,11 +34,12 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
   String deviceName = '';
   String deviceSerial = '';
   String qrResult;
-
+  Position position;
 
   @override
   void initState() {
     checkIfQRScanned();
+    getLocation();
     super.initState();
   }
 
@@ -327,9 +331,11 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     await Firestore.instance.collection('SerialNumbers').document(deviceSerial).get().then((serialData){
       if(serialData.exists==false){
         //Serial Not Found
+        snackError('Invalid Serial', context);
         print('Serial Not Found');
       }else{
         if(serialData.data['SerialReserved']==true){
+          snackError('Invalid Serial', context);
           print('serial Found But Associated to another user');
           //serial Found But Associated to another user
         }else{
@@ -341,14 +347,19 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     });
   }
 
+  getLocation() async {
+    position = await Geolocator().getCurrentPosition(desiredAccuracy: prefix0.LocationAccuracy.high);
+      debugPrint('location: ${position.latitude}');
+      return position;
+  }
+
   Future addDevice(String serial,String deviceName)async{
     int distanceAway=0;
     await Firestore.instance.collection('Devices').document(serial).setData(({
       'DeviceName':deviceName,
       'DeviceSerialNumber':serial,
       'DistanceAway':distanceAway,
-      'Altitude':' ',
-      'Latitude':' ',
+      'Location':GeoPoint(position.latitude,position.longitude),
       'UID':widget.uID,
     })).whenComplete((){
       updateSerial(serial).whenComplete((){

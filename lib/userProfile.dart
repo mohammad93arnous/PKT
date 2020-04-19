@@ -239,8 +239,10 @@ class _UserPofState extends State<UserPof> {
             ),
             ListTile(
               onTap: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+                FirebaseAuth.instance.signOut().whenComplete((){
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+                });
+
               },
               title: Text(
                 "SignOut",
@@ -264,23 +266,11 @@ class _UserPofState extends State<UserPof> {
         centerTitle: true,
         backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),
       ),
-//      floatingActionButton: FloatingActionButton(
-//        backgroundColor: Colors.indigoAccent,
-//        child: Icon(Icons.person),
-//        onPressed: () => debugPrint("Add A Kid"),
-//      ),
       bottomNavigationBar: BottomNavigationBar(items: [
-//        BottomNavigationBarItem(
-//            icon: InkWell(
-//                onTap: () {
-//                  getUserInfo();
-//                },
-//                child: Icon(Icons.account_box)),
-//            title: Text("Account")),
         BottomNavigationBarItem(
           icon: InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowGivenDeviceMap()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowGivenDeviceMap(uID: uID,)));
               },
               child: Icon(Icons.gps_fixed)),
           title: Text("GPS"),

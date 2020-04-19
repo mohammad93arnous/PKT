@@ -1,24 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart'as prefix0;
+import 'package:location/location.dart';
 import 'SnackBar.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'RegistertionAccount.dart';
 import 'main.dart';
+import 'userProfile.dart';
 
 class DeviceInfo extends StatefulWidget {
-  DeviceInfo({this.result,this.uID});
+  DeviceInfo({this.result,this.uID,this.accountName, this.password,this.email});
+
   @override
   State<StatefulWidget> createState() => new _DeviceInfoState();
   String result;
   String uID;
+  String accountName;
+  String password;
+  String email;
 
 }
 
 class _DeviceInfoState extends State<DeviceInfo> {
-
-
+  String userID = '';
+  FirebaseUser user;
   bool _obscureTextLogin = true;
   TextEditingController deviceAccountName = new TextEditingController();
   TextEditingController deviceSer = new TextEditingController();
@@ -29,14 +39,17 @@ class _DeviceInfoState extends State<DeviceInfo> {
   String deviceName = '';
   String deviceSerial = '';
   String qrResult;
+  Position position;
 
   @override
   void initState() {
     checkIfQRScanned();
+    getLocation();
     super.initState();
   }
 
   void _toggleLogin() {
+    if (!mounted) return;
     setState(() {
       _obscureTextLogin = !_obscureTextLogin;
     });
@@ -49,11 +62,13 @@ class _DeviceInfoState extends State<DeviceInfo> {
 
   checkIfQRScanned() {
     if (result == null) {
+      if (!mounted) return;
       setState(() {
         deviceSerial = 'Device Serial Number';
         deviceName = 'Input your Device Name';
       });
     } else if (result != null) {
+      if (!mounted) return;
       setState(() {
         deviceSer.text = result;
         //deviceSerial=result;
@@ -65,18 +80,20 @@ class _DeviceInfoState extends State<DeviceInfo> {
   deviNameValidation() {
     if(deviceNameP==null){
       if (deviceAccountName.text == null || deviceName.length <= 3) {
-        snackError('Name Must Contain Text Only', context);
+        //snackError('Name Must Contain Text Only', context);
         deviceNameValidated = false;
       } else if (deviceAccountName.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
           true) {
-        snackError('Name Must Contain Text Only', context);
+        //snackError('Name Must Contain Text Only', context);
         deviceNameValidated = false;
       } else {
+        if (!mounted) return;
         setState(() {
           deviceNameValidated = true;
         });
       }
     }else{
+      if (!mounted) return;
       setState(() {
         deviceNameValidated = true;
       });
@@ -92,11 +109,13 @@ class _DeviceInfoState extends State<DeviceInfo> {
         snackError('Serial Number Must Contain Text Only', context);
         deviceSerialValidated = false;
       } else {
+        if (!mounted) return;
         setState(() {
           deviceSerialValidated = true;
         });
       }
     }else{
+      if (!mounted) return;
       setState(() {
         deviceSerialValidated = true;
       });
@@ -141,7 +160,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                   color: Colors.black,
                 ),
                 decoration: InputDecoration(
-                    //should be all small
+                  //should be all small
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
@@ -151,6 +170,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                     hintText: "Input your Device Name $deviceName",
                     prefixIcon: Icon(Icons.watch)),
                 onChanged: (val) {
+                  if (!mounted) return;
                   setState(() {
                     deviceName = val;
                     deviceNameP = val;   //why?? for what?
@@ -168,7 +188,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                   color: Colors.black,
                 ),
                 decoration: InputDecoration(
-                    //should be all small
+                  //should be all small
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide(width: 2, color: Colors.green)),
@@ -178,6 +198,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                     hintText: 'Device Serial Number $deviceSerial',
                     prefixIcon: Icon(Icons.create)),
                 onChanged: (val) {
+                  if (!mounted) return;
                   setState(() {
                     deviceSerial = val;
                   });
@@ -192,6 +213,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
 //                  Navigator.of(context).push(MaterialPageRoute(
 //                      builder: (BuildContext context) => AddingDevice()));
                   scanQR().whenComplete((){
+                    if (!mounted) return;
                     setState(() {
                       result = qrResult;
                     });
@@ -236,7 +258,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      'Back',
+                      'Cancel',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
@@ -247,10 +269,6 @@ class _DeviceInfoState extends State<DeviceInfo> {
                   RaisedButton(
                     onPressed: () {
                       validatingBeforeNavigate();
-                      print('1 $deviceName');
-                      print('2 $deviceNameP');
-                      print('3 $deviceSerial');
-                      print('2 '+deviceSer.text);
                     },
                     child: Text(
                       'Connect',
@@ -272,6 +290,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
   Future scanQR() async {
     try {
       qrResult = await BarcodeScanner.scan();
+      if (!mounted) return;
       setState(() {
         result = qrResult;
       });
@@ -283,7 +302,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
         snackError('Unknown Error', context);
       }
     } on FormatException {
-     snackError('You pressed the back button before scanning anything', context);
+      snackError('You pressed the back button before scanning anything', context);
     } catch (ex) {
       snackError('Unknown Error', context);
     }
@@ -292,47 +311,144 @@ class _DeviceInfoState extends State<DeviceInfo> {
   Future validatingBeforeNavigate() {
     print(deviceNameValidated.toString());
     print(deviceSerialValidated.toString());
-  if(deviceNameP!=null && deviceSer.text!=null){
-    print('1');
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => RegistertionAccount(
-          deviceName: deviceNameP,
-          deviceSerial: deviceSer.text,
-          //result: widget.result,
-          //ToDO:
-        )));
-  }else{
-    print('else');
-    if (deviceName == null) {
-      snackError('Device Name cannot be empty', context);
-    } else if (deviceSerial == null|| result==null) {
-      snackError('Device Serial Number cannot be empty', context);
-    } else if (deviceName == null||deviceNameP==null) {
-      snackError('Re-Password cannot be empty', context);
-    } else {
-      deviNameValidation();
-      deviSiralValidation();
-
-      if (deviceNameValidated == false && deviceSerialValidated == false) {
-        setState(() {
-          deviceNameValidated = false;
-          deviceSerialValidated = false;
-        });
+    if(deviceNameP!=null && deviceSer.text!=null){
+      validateSerialNumber(deviceNameP,deviceSer.text);
+    }else{
+      print('else');
+      if (deviceName == null) {
+        snackError('Device Name cannot be empty', context);
+      } else if (deviceSerial == null|| result==null) {
+        snackError('Device Serial Number cannot be empty', context);
+      } else if (deviceName == null||deviceNameP==null) {
+        snackError('Re-Password cannot be empty', context);
       } else {
-        print(deviceNameValidated.toString());
-        print(deviceSerialValidated.toString());
+        deviNameValidation();
+        deviSiralValidation();
+
         if (deviceNameValidated == false && deviceSerialValidated == false) {
+          if (!mounted) return null;
+          setState(() {
+            deviceNameValidated = false;
+            deviceSerialValidated = false;
+          });
         } else {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => RegistertionAccount(
-                deviceName: deviceName,
-                deviceSerial: deviceSerial,
-                //result: widget.result,
-                //ToDo:
-              )));
+          print(deviceNameValidated.toString());
+          print(deviceSerialValidated.toString());
+          if (deviceNameValidated == false && deviceSerialValidated == false) {
+          } else {
+            validateSerialNumber(deviceName,deviceSerial);
+
+          }
         }
       }
     }
   }
+
+  Future validateSerialNumber(String deviceName,String serialNumber)async {
+    await Firestore.instance.collection('SerialNumbers').document(deviceSerial).get().then((serialData){
+      if(serialData.exists==false){
+        //Serial Not Found
+        snackError('Invalid Serial', context);
+        print('Serial Not Found');
+      }else{
+        if(serialData.data['SerialReserved']==true){
+          snackError('Invalid Serial', context);
+          print('serial Found But Associated to another user');
+          //serial Found But Associated to another user
+        }else{
+          print('Serial Found and free to use');
+          //Serial Found and free to use
+          signUp().then((val){
+           if(user==null){
+             snackError('Cannot SignIn please try again', context);
+           }else{
+             if(user.uid==null){
+               snackError('Cannot SignIn please try again', context);
+             }else{
+               saveUser().whenComplete((){
+                 addDevice(serialNumber,deviceName);
+               });
+             }
+           }
+          });
+        }
+      }
+    });
+  }
+
+  getLocation() async {
+    position = await Geolocator().getCurrentPosition(desiredAccuracy: prefix0.LocationAccuracy.high);
+    debugPrint('location: ${position.latitude}');
+    return position;
+  }
+
+  Future addDevice(String serial,String deviceName)async{
+    print('Saving Device to DB');
+    int distanceAway=0;
+    await Firestore.instance.collection('Devices').document(serial).setData(({
+      'DeviceName':deviceName,
+      'DeviceSerialNumber':serial,
+      'DistanceAway':distanceAway,
+      'Location':GeoPoint(position.latitude,position.longitude),
+      'UID':userID,
+    })).whenComplete((){
+      updateSerial(serial).whenComplete((){
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => UserPof(uID: userID,)));
+      });
+    });
+  }
+
+  Future updateSerial(String serial)async{
+    await Firestore.instance.collection('SerialNumbers').document(serial).updateData(({
+      'SerialReserved':true,
+      'ReservedUID':widget.uID,
+    }));
+  }
+
+
+  Future signUp() async {
+    print('Creating User');
+    if (widget.email == null) {
+      snackError('Email is Empty', context);
+    } else {
+      try {
+        user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email:widget.email, password: widget.password);
+      } catch (e) {
+        snackError(e.toString(), context);
+      }
+    }
+    return user;
+  }
+
+  Future saveUser() async {
+    print('adding User to DB');
+    if (user != null) {
+      if (user.uid != null && user.email != null) {
+        if (!mounted) return;
+        setState(() {
+          userID = user.uid;
+        });
+        await Firestore.instance.collection('UsersAccount').document(userID).setData({
+          'AccountName': widget.accountName,
+          'Email': widget.email,
+          'UserID': userID,
+        });
+        if (widget.email != null && widget.email.length > 6) {
+          if (widget.email.contains("@") == true) {
+            // Do Nothing
+          } else {
+            return snackError(" Email must be lower case", context);
+          }
+        } else {
+          return snackError("Invalid Email", context);
+        }
+      } else {
+        snackError('Connection Error', context);
+      }
+    } else {
+      snackError('Email Does Not Exist ', context);
+    }
   }
 }

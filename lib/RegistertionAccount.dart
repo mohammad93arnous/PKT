@@ -313,9 +313,6 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
                   LinkWithEmail(
                     accountName: accountName,
                     password: _loginPassword,
-                    deviceName:widget.deviceName,
-                    deviceSerial :widget.deviceSerial,
-                    result: widget.result,
                   )
           ));
         }

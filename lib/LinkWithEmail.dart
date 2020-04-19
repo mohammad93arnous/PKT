@@ -3,14 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:pktapp/DeviceInfo.dart';
 import 'SnackBar.dart';
 import 'userProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class LinkWithEmail extends StatefulWidget {
-  LinkWithEmail(
-      {this.accountName, this.password, this.deviceName, this.deviceSerial, this.result});
+  LinkWithEmail({this.accountName, this.password, this.deviceName, this.deviceSerial, this.result});
   @override
   State<StatefulWidget> createState() => new _LinkWithEmailState();
   String accountName;
@@ -23,71 +23,13 @@ class LinkWithEmail extends StatefulWidget {
 class _LinkWithEmailState extends State<LinkWithEmail> {
   final _scaffoldKey = GlobalKey(); // Scaffold Key
   String email;
-  String userID = '';
-  FirebaseUser user;
+
 
   @override
   void initState() {
-    print(widget.accountName);
-    print(widget.password);
-    print(widget.deviceName);
-    print(widget.deviceSerial);
-
     super.initState();
   }
 
-  Future signUp() async {
-    if (email == null) {
-      snackError('Email is Empty', context);
-    } else {
-      try {
-        user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email, password: widget.password);
-      } catch (e) {
-        snackError(e.toString(), context);
-      }
-    }
-    saveUser();
-    return user;
-  }
-
-  Future saveUser() async {
-    if (user != null) {
-      if (user.uid != null && user.email != null) {
-        setState(() {
-          userID = user.uid;
-        });
-        await Firestore.instance.collection('UsersAccount').document(userID).setData({
-          'AccountName': widget.accountName,
-          'Email': email,
-          'UserID': userID,
-          'Devices': {
-            '0': {
-              'Altitude': ' ',
-              'Latitude': '',
-              'DistanceAway': '',
-              'DeviceName': widget.deviceName,
-              'DeviceSerialNumber': widget.deviceSerial,
-            }
-          }
-        });
-        if (email != null && email.length > 6) {
-          if (email.contains("@") == true) {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => UserPof()));
-          } else {
-            return snackError(" Email must be lower case", context);
-          }
-        } else {
-          return snackError("Invalid Email", context);
-        }
-      } else {
-        snackError('Connection Error', context);
-      }
-    } else {
-      snackError('Email Does Not Exist ', context);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,20 +122,23 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      signUp().whenComplete(() {
-                        saveUser().whenComplete(() {
+                      if(email==null){
+                        snackError('Email Invalid', context);
+                      }else{
+                        if(email.length<=5|| email.contains('@')==false){
+                          snackError('Email Invalid', context);
+                        }else{
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) => UserPof(
-                                    deviceName: widget.deviceName,
-                                    deviceSerial: widget.deviceSerial,
-                                    accountName: widget.accountName,
-                                    email: email,
-                                  )));
-                        });
-                      });
+                              builder: (BuildContext context) => DeviceInfo(
+                                accountName: widget.accountName,
+                                email: email,
+                                password: widget.password,
+                              )));
+                        }
+                      }
                     },
                     child: Text(
-                      'Complete',
+                      'Next',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,

@@ -11,8 +11,10 @@ String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
 
 //'pk.eyJ1IjoiaWdhdXJhYiIsImEiOiJjazFhOWlkN2QwYzA5M2RyNWFvenYzOTV0In0.lzjuSBZC6LcOy_oRENLKCg',
 class ShowGivenDeviceMap extends StatefulWidget {
+  ShowGivenDeviceMap({this.uID});
   @override
   _ShowGivenDeviceMapState createState() => _ShowGivenDeviceMapState();
+String uID;
 }
 // Dependanceies
 //google_maps_flutter: ^0.0.3+3
@@ -23,11 +25,13 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   Completer<GoogleMapController> _controller = Completer();
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   BitmapDescriptor pinLocationIcon;
+
   @override
   void initState(){
     crearmarcadores();
     super.initState();
     setCustomMapPin();
+    _currentLocation();
   }
   void setCustomMapPin() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
@@ -49,6 +53,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   }
   crearmarcadores() async{
     await _database.collection('Devices')
+        .where('UID',isEqualTo: widget.uID)
         .getDocuments().then((docs) {
       if(docs.documents.isNotEmpty){
         for(int i= 0; i < docs.documents.length; i++) {

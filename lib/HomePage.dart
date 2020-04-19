@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pktapp/DeviceInfo.dart';
 import 'package:pktapp/userProfile.dart';
 import 'AUTH/Auth.dart';
+import 'RegistertionAccount.dart';
 import 'SnackBar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';//new
 import 'dart:async';//new
@@ -260,7 +261,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => DeviceInfo()));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => RegistertionAccount()));
                       // Calling SnackBar with Error Text
 
                     },
