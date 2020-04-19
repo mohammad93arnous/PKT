@@ -270,7 +270,7 @@ class _UserPofState extends State<UserPof> {
         BottomNavigationBarItem(
           icon: InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowGivenDeviceMap(uID: uID,)));
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowMap(uID: uID,)));
               },
               child: Icon(Icons.gps_fixed)),
           title: Text("GPS"),

@@ -39,7 +39,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   void dispose() {
     super.dispose();
   }
-  
+
   void setCustomMapPin() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 1.0),
