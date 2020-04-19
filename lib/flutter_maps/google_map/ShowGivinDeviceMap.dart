@@ -25,6 +25,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   Completer<GoogleMapController> _controller = Completer();
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   BitmapDescriptor pinLocationIcon;
+  QuerySnapshot fbData;
 
   @override
   void initState(){
@@ -33,6 +34,12 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
     setCustomMapPin();
     _currentLocation();
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+  
   void setCustomMapPin() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 1.0),
@@ -41,23 +48,34 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   MapType _defaultMapType = MapType.normal;
 
   void _changeMapType() {
+    if (!mounted) return;
     setState(() {
       _defaultMapType = _defaultMapType == MapType.normal ? MapType.normal : MapType.normal;
     });
   }
 
   void _changeMapType2() {
+    if (!mounted) return;
     setState(() {
       _defaultMapType = _defaultMapType == MapType.satellite ? MapType.satellite : MapType.satellite;
     });
   }
   crearmarcadores() async{
-    await _database.collection('Devices')
-        .where('UID',isEqualTo: widget.uID)
-        .getDocuments().then((docs) {
-      if(docs.documents.isNotEmpty){
-        for(int i= 0; i < docs.documents.length; i++) {
-          initMarker(docs.documents[i].data, docs.documents[i].documentID);
+//    await _database.collection('Devices')
+//        .where('UID',isEqualTo: widget.uID)
+//        .getDocuments().then((docs) {
+//      if(docs.documents.isNotEmpty){
+//        for(int i= 0; i < docs.documents.length; i++) {
+//          initMarker(docs.documents[i].data, docs.documents[i].documentID);
+//        }
+//      }
+//    });
+    Stream<QuerySnapshot> deviceData = Firestore.instance.collection('Devices')
+        .where('UID',isEqualTo: widget.uID).snapshots();
+    deviceData.listen((QuerySnapshot devData){
+      if(devData.documents.isNotEmpty){
+        for(int i= 0; i < devData.documents.length; i++) {
+          initMarker(devData.documents[i].data, devData.documents[i].documentID);
         }
       }
     });
@@ -72,7 +90,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
       position: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
       infoWindow: InfoWindow(title: lugar['DeviceName']),
     );
-
+    if (!mounted) return;
     setState(() {
       // adding a new marker to map
       markers[markerId] = marker;
