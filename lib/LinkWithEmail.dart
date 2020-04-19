@@ -123,7 +123,7 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                   RaisedButton(
                     onPressed: () {
                       if(email==null){
-                        snackError('Email Invalid', context);
+                        snackError('Email cannot be empty', context);
                       }else{
                         if(email.length<=5|| email.contains('@')==false){
                           snackError('Email Invalid', context);

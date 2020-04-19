@@ -76,7 +76,7 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
         deviceNameValidated = false;
       } else if (deviceAccountName.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
           true) {
-        //snackError('Name Must Contain Text Only', context);
+        snackError('Name Must Contain Text Only', context);
         deviceNameValidated = false;
       } else {
         setState(() {
