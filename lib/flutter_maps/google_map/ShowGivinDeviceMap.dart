@@ -11,10 +11,11 @@ String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
 
 //'pk.eyJ1IjoiaWdhdXJhYiIsImEiOiJjazFhOWlkN2QwYzA5M2RyNWFvenYzOTV0In0.lzjuSBZC6LcOy_oRENLKCg',
 class ShowGivenDeviceMap extends StatefulWidget {
-  ShowGivenDeviceMap({this.uID});
+  ShowGivenDeviceMap({this.uID,this.deviceID});
   @override
   _ShowGivenDeviceMapState createState() => _ShowGivenDeviceMapState();
 String uID;
+String deviceID;
 }
 // Dependanceies
 //google_maps_flutter: ^0.0.3+3
@@ -25,7 +26,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   Completer<GoogleMapController> _controller = Completer();
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   BitmapDescriptor pinLocationIcon;
-  QuerySnapshot fbData;
+  DocumentSnapshot fbData;
 
   @override
   void initState(){
@@ -61,22 +62,11 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
     });
   }
   crearmarcadores() async{
-//    await _database.collection('Devices')
-//        .where('UID',isEqualTo: widget.uID)
-//        .getDocuments().then((docs) {
-//      if(docs.documents.isNotEmpty){
-//        for(int i= 0; i < docs.documents.length; i++) {
-//          initMarker(docs.documents[i].data, docs.documents[i].documentID);
-//        }
-//      }
-//    });
-    Stream<QuerySnapshot> deviceData = Firestore.instance.collection('Devices')
-        .where('UID',isEqualTo: widget.uID).snapshots();
-    deviceData.listen((QuerySnapshot devData){
-      if(devData.documents.isNotEmpty){
-        for(int i= 0; i < devData.documents.length; i++) {
-          initMarker(devData.documents[i].data, devData.documents[i].documentID);
-        }
+    Stream<DocumentSnapshot> deviceData = Firestore.instance.collection('Devices').document(widget.deviceID).snapshots();
+    deviceData.listen((DocumentSnapshot devData){
+      if(devData.data.isNotEmpty){
+          initMarker(devData.data, devData.data.length.toString());
+
       }
     });
   }

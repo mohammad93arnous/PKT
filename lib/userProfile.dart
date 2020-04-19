@@ -368,7 +368,10 @@ class _UserPofState extends State<UserPof> {
                               left: 370,
                               child: InkWell(
                                 onTap: () {
-                                  print('Arrow Tapped');
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowGivenDeviceMap(
+                                    uID: uID,
+                                    deviceID: deviceFBData.documents[i].data['DeviceSerialNumber'].toString(),
+                                  )));
                                 },
                                 child: Icon(
                                   Icons.arrow_forward_ios,
