@@ -16,6 +16,7 @@ class ShowMap extends StatefulWidget {
   _ShowMapState createState() => _ShowMapState();
   String uID;
 }
+bool clientsToggle = false;
 // Dependanceies
 //google_maps_flutter: ^0.0.3+3
 //geoflutterfire: ^2.1.0
@@ -74,12 +75,20 @@ class _ShowMapState extends State<ShowMap> {
         .where('UID',isEqualTo: widget.uID).snapshots();
     deviceData.listen((QuerySnapshot devData){
       if(devData.documents.isNotEmpty){
+        setState(() {
+          clientsToggle = true;
+        });
         for(int i= 0; i < devData.documents.length; i++) {
           initMarker(devData.documents[i].data, devData.documents[i].documentID);
+
         }
       }
     });
   }
+
+
+
+
   void initMarker(lugar, lugaresid) {
     var markerIdVal = lugaresid;
     final MarkerId markerId = MarkerId(markerIdVal);
@@ -105,7 +114,9 @@ class _ShowMapState extends State<ShowMap> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: GoogleMap(
+      body:
+      GoogleMap(
+
         mapType:_defaultMapType,
         initialCameraPosition: _kGooglePlex,
         onMapCreated: (GoogleMapController controller) {
@@ -114,11 +125,9 @@ class _ShowMapState extends State<ShowMap> {
         myLocationEnabled: true,
         markers: Set<Marker>.of(markers.values),
       ),
-//      floatingActionButton: FloatingActionButton.extended(
-//        onPressed: _currentLocation,
-//        label: Text('Your Location'),
-//        icon: Icon(Icons.location_on),
-//      ),
+
+
+
       floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
         children: [
           SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
@@ -136,6 +145,7 @@ class _ShowMapState extends State<ShowMap> {
               onTap: ()=>_changeMapType2()
           ),
         ],) ,
+
     );
   }
 
@@ -159,6 +169,6 @@ class _ShowMapState extends State<ShowMap> {
       ),
     ));
   }
-
+ 
 
 }

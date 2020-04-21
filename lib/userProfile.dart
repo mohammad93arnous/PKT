@@ -222,17 +222,17 @@ class _UserPofState extends State<UserPof> {
                 ),
                 onTap: () {},
                 trailing: Icon(Icons.account_box)),
-//            ListTile(
-//              title: Text("Live Location"),
-//              onTap: () {
-//                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowMap()));
-//              },
-//              trailing: Icon(Icons.location_on),
-//            ),
-//            ListTile(
-//              title: Text("Devices"),
-//              trailing: Icon(Icons.perm_device_information),
-//            ),
+            ListTile(
+              title: Text("Live Location"),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowMap()));
+              },
+              trailing: Icon(Icons.location_on),
+            ),
+            ListTile(
+              title: Text("Devices"),
+              trailing: Icon(Icons.perm_device_information),
+            ),
             ListTile(
               title: Text("History"),
               trailing: Icon(Icons.history),
