@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -27,7 +29,10 @@ class _ShowMapState extends State<ShowMap> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   BitmapDescriptor pinLocationIcon;
   QuerySnapshot fbData;
-
+int _circleIdCounter=1;
+double radius;
+Set<Circle>_circles=HashSet<Circle>();
+bool _isCircle=false;
   @override
   void initState(){
     crearmarcadores();
@@ -40,6 +45,15 @@ class _ShowMapState extends State<ShowMap> {
   void dispose() {
     super.dispose();
   }
+
+  void _setCircles(LatLng point){
+    final String circleIdval='circle_id_$_circleIdCounter';
+    _circleIdCounter++;
+    print('Circle | Latitude: ${point.latitude} Longitude: ${point.longitude} Redius: $radius');
+    _circles.add(Circle(circleId: CircleId(circleIdval),center: point,radius: radius,fillColor: Colors.redAccent.withOpacity(0.5),strokeWidth: 3,strokeColor: Colors.redAccent));
+
+  }
+
 
   void setCustomMapPin() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
@@ -124,6 +138,15 @@ class _ShowMapState extends State<ShowMap> {
         },
         myLocationEnabled: true,
         markers: Set<Marker>.of(markers.values),
+        circles: _circles,
+        onTap: (point){
+          if(_isCircle){
+            setState(() {
+              _circles.clear();
+              _setCircles(point);
+            });
+          }
+        },
       ),
 
 
@@ -143,6 +166,39 @@ class _ShowMapState extends State<ShowMap> {
               child: Icon(Icons.map),
               label: "Satellite Map",
               onTap: ()=>_changeMapType2()
+          ),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.check_circle),
+              label: "Circle",
+              onTap: (){
+            _isCircle=true;
+            radius=50;
+           return showDialog(context: context,
+           child: AlertDialog(backgroundColor: Colors.grey[900],
+           title: Text("Choose the radius (M)",
+           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), ),
+             content: Padding(
+               padding: EdgeInsets.all(8),
+               child: Material(color: Colors.black,
+               child: TextField(style: TextStyle(fontSize: 16,color:Colors.white ),
+                 decoration: InputDecoration(icon: Icon(Icons.zoom_out_map),
+                 hintText: 'Ex: 100',suffixText: 'Meters',),
+                 keyboardType: TextInputType.numberWithOptions(),
+                 onChanged: (input)  {
+                 setState(() {
+                   radius=double.parse(input);  });
+                 },),)),
+
+
+           actions: <Widget>[
+             FlatButton(  onPressed: ()=>Navigator.pop(context),
+             child: Text('OK',style: TextStyle(fontWeight: FontWeight.bold),
+             )),],));},
+
+
+
+
+
           ),
         ],) ,
 
@@ -169,6 +225,6 @@ class _ShowMapState extends State<ShowMap> {
       ),
     ));
   }
- 
+
 
 }

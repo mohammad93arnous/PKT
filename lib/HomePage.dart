@@ -187,7 +187,11 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   color: Colors.black,
                 ),
-                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(2), borderSide: BorderSide(width: 2, color: Colors.green)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0), borderSide: BorderSide(width: 2, color: Colors.green)), hintText: "Enter Your sEmail ", prefixIcon: Icon(Icons.email)),
+                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(2),
+                    borderSide: BorderSide(width: 2, color: Colors.green)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(width: 2, color: Colors.green)),
+                    hintText: "Enter Your sEmail ", prefixIcon: Icon(Icons.email)),
                 onChanged: (val) {
                   setState(() {
                     email = val;
