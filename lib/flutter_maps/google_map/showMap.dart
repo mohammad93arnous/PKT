@@ -47,7 +47,7 @@ bool _isCircle=false;
   }
 
   void _setCircles(LatLng point){
-    final String circleIdval='circle_id_$_circleIdCounter';
+    String circleIdval='circle_id_$_circleIdCounter';
     _circleIdCounter++;
     print('Circle | Latitude: ${point.latitude} Longitude: ${point.longitude} Redius: $radius');
     _circles.add(Circle(circleId: CircleId(circleIdval),center: point,radius: radius,fillColor: Colors.redAccent.withOpacity(0.5),strokeWidth: 3,strokeColor: Colors.redAccent));
@@ -94,6 +94,8 @@ bool _isCircle=false;
         });
         for(int i= 0; i < devData.documents.length; i++) {
           initMarker(devData.documents[i].data, devData.documents[i].documentID);
+//          _setCircles(devData.documents[i].data['LatLng']);
+
 
         }
       }
@@ -170,30 +172,32 @@ bool _isCircle=false;
           SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
               child: Icon(Icons.check_circle),
               label: "Circle",
-              onTap: (){
-            _isCircle=true;
-            radius=50;
-           return showDialog(context: context,
-           child: AlertDialog(backgroundColor: Colors.grey[900],
-           title: Text("Choose the radius (M)",
-           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), ),
-             content: Padding(
-               padding: EdgeInsets.all(8),
-               child: Material(color: Colors.black,
-               child: TextField(style: TextStyle(fontSize: 16,color:Colors.white ),
-                 decoration: InputDecoration(icon: Icon(Icons.zoom_out_map),
-                 hintText: 'Ex: 100',suffixText: 'Meters',),
-                 keyboardType: TextInputType.numberWithOptions(),
-                 onChanged: (input)  {
-                 setState(() {
-                   radius=double.parse(input);  });
-                 },),)),
-
-
-           actions: <Widget>[
-             FlatButton(  onPressed: ()=>Navigator.pop(context),
-             child: Text('OK',style: TextStyle(fontWeight: FontWeight.bold),
-             )),],));},
+              onTap: () {
+                _isCircle = true;
+                radius = 50;
+                return radius = 80.0;
+              }
+//             showDialog(context: context,
+//           child: AlertDialog(backgroundColor: Colors.grey[900],
+//           title: Text("Choose the radius (M)",
+//           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), ),
+//             content: Padding(
+//               padding: EdgeInsets.all(8),
+//               child: Material(color: Colors.black,
+//               child: TextField(style: TextStyle(fontSize: 16,color:Colors.white ),
+//                 decoration: InputDecoration(icon: Icon(Icons.zoom_out_map),
+//                 hintText: 'Ex: 100',suffixText: 'Meters',),
+//                 keyboardType: TextInputType.numberWithOptions(),
+//                 onChanged: (input)  {
+//                 setState(() {
+//                   radius=double.parse(input);  });
+//                 },),)),
+//
+//
+//           actions: <Widget>[
+//             FlatButton(  onPressed: ()=>Navigator.pop(context),
+//             child: Text('OK',style: TextStyle(fontWeight: FontWeight.bold),
+//             )),],));},
 
 
 
