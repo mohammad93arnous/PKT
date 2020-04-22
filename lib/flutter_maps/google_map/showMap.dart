@@ -46,13 +46,7 @@ bool _isCircle=false;
     super.dispose();
   }
 
-  void _setCircles(LatLng point){
-    String circleIdval='circle_id_$_circleIdCounter';
-    _circleIdCounter++;
-    print('Circle | Latitude: ${point.latitude} Longitude: ${point.longitude} Redius: $radius');
-    _circles.add(Circle(circleId: CircleId(circleIdval),center: point,radius: radius,fillColor: Colors.redAccent.withOpacity(0.5),strokeWidth: 3,strokeColor: Colors.redAccent));
 
-  }
 
 
   void setCustomMapPin() async {
@@ -94,7 +88,7 @@ bool _isCircle=false;
         });
         for(int i= 0; i < devData.documents.length; i++) {
           initMarker(devData.documents[i].data, devData.documents[i].documentID);
-//          _setCircles(devData.documents[i].data['LatLng']);
+//          _setCircles(devData.documents[i].data['Location']);
 
 
         }
@@ -102,7 +96,17 @@ bool _isCircle=false;
     });
   }
 
+  void _setCircles(point){
+    String circleIdval='circle_id_$_circleIdCounter';
+    _circleIdCounter++;
+    print('Circle | Latitude: ${point.latitude} Longitude: ${point.longitude} Redius: $radius');
+    _circles.add(Circle(circleId: CircleId(circleIdval),
+        center: point,
+        radius: radius,
+        fillColor: Colors.redAccent.withOpacity(0.5),
+        strokeWidth: 3,strokeColor: Colors.redAccent));
 
+  }
 
 
   void initMarker(lugar, lugaresid) {
@@ -150,33 +154,30 @@ bool _isCircle=false;
           }
         },
       ),
-
-
-
-      floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
-        children: [
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-              child: Icon(Icons.location_searching),
-              label: "current location",
-              onTap: ()=>_currentLocation()),
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-              child: Icon(Icons.map),
-              label: "Normal Map",
-              onTap: ()=>_changeMapType()
-          ),
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-              child: Icon(Icons.map),
-              label: "Satellite Map",
-              onTap: ()=>_changeMapType2()
-          ),
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-              child: Icon(Icons.check_circle),
-              label: "Circle",
-              onTap: () {
-                _isCircle = true;
-                radius = 50;
-                return radius = 80.0;
-              }
+        floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
+    children: [
+    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+    child: Icon(Icons.location_searching),
+    label: "current location",
+    onTap: ()=>_currentLocation()),
+    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+    child: Icon(Icons.map),
+    label: "Normal Map",
+    onTap: ()=>_changeMapType()
+    ),
+    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+    child: Icon(Icons.map),
+    label: "Satellite Map",
+    onTap: ()=>_changeMapType2()
+    ),
+    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+    child: Icon(Icons.check_circle),
+    label: "Circle",
+    onTap: () {
+    _isCircle = true;
+    radius = 50;
+    return radius = 80.0;
+    }
 //             showDialog(context: context,
 //           child: AlertDialog(backgroundColor: Colors.grey[900],
 //           title: Text("Choose the radius (M)",
@@ -200,16 +201,11 @@ bool _isCircle=false;
 //             )),],));},
 
 
+    ),
+    ],) ,
 
-
-
-          ),
-        ],) ,
-
-    );
+      );
   }
-
-
 
   void _currentLocation() async {
     final GoogleMapController controller = await _controller.future;
@@ -229,6 +225,5 @@ bool _isCircle=false;
       ),
     ));
   }
-
-
+  
 }
