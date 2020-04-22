@@ -19,20 +19,15 @@ class ShowMap extends StatefulWidget {
   String uID;
 }
 bool clientsToggle = false;
-// Dependanceies
-//google_maps_flutter: ^0.0.3+3
-//geoflutterfire: ^2.1.0
-//location: ^2.5.3
 class _ShowMapState extends State<ShowMap> {
   final Firestore _database = Firestore.instance;
   Completer<GoogleMapController> _controller = Completer();
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  Map<CircleId, Circle> circles = <CircleId, Circle>{};
   BitmapDescriptor pinLocationIcon;
   QuerySnapshot fbData;
-int _circleIdCounter=1;
-double radius;
-Set<Circle>_circles=HashSet<Circle>();
-bool _isCircle=false;
+  double radius=80.0;
+
   @override
   void initState(){
     crearmarcadores();
@@ -46,16 +41,12 @@ bool _isCircle=false;
     super.dispose();
   }
 
-
-
-
   void setCustomMapPin() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 1.0),
         'assets/map-marker.png');
   }
   MapType _defaultMapType = MapType.normal;
-
   void _changeMapType() {
     if (!mounted) return;
     setState(() {
@@ -70,15 +61,6 @@ bool _isCircle=false;
     });
   }
   crearmarcadores() async{
-//    await _database.collection('Devices')
-//        .where('UID',isEqualTo: widget.uID)
-//        .getDocuments().then((docs) {
-//      if(docs.documents.isNotEmpty){
-//        for(int i= 0; i < docs.documents.length; i++) {
-//          initMarker(docs.documents[i].data, docs.documents[i].documentID);
-//        }
-//      }
-//    });
     Stream<QuerySnapshot> deviceData = Firestore.instance.collection('Devices')
         .where('UID',isEqualTo: widget.uID).snapshots();
     deviceData.listen((QuerySnapshot devData){
@@ -88,31 +70,14 @@ bool _isCircle=false;
         });
         for(int i= 0; i < devData.documents.length; i++) {
           initMarker(devData.documents[i].data, devData.documents[i].documentID);
-//          _setCircles(devData.documents[i].data['Location']);
-
 
         }
       }
     });
   }
-
-  void _setCircles(point){
-    String circleIdval='circle_id_$_circleIdCounter';
-    _circleIdCounter++;
-    print('Circle | Latitude: ${point.latitude} Longitude: ${point.longitude} Redius: $radius');
-    _circles.add(Circle(circleId: CircleId(circleIdval),
-        center: point,
-        radius: radius,
-        fillColor: Colors.redAccent.withOpacity(0.5),
-        strokeWidth: 3,strokeColor: Colors.redAccent));
-
-  }
-
-
   void initMarker(lugar, lugaresid) {
     var markerIdVal = lugaresid;
     final MarkerId markerId = MarkerId(markerIdVal);
-
     // creating a new MARKER
     final Marker marker = Marker(
       markerId: markerId,icon:pinLocationIcon ,
@@ -123,6 +88,21 @@ bool _isCircle=false;
     setState(() {
       // adding a new marker to map
       markers[markerId] = marker;
+    });
+    var circleIdVal=lugaresid;
+    final CircleId circleId = CircleId(circleIdVal);
+  final Circle circle=Circle(
+        circleId: circleId,
+        center: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
+        fillColor: Colors.redAccent.withOpacity(0.5),
+        strokeWidth: 3,
+        strokeColor: Colors.redAccent,
+        radius: radius
+    );
+    if (!mounted) return;
+    setState(() {
+      // adding a new marker to map
+      circles[circleId] = circle;
     });
   }
 
@@ -136,7 +116,6 @@ bool _isCircle=false;
     return new Scaffold(
       body:
       GoogleMap(
-
         mapType:_defaultMapType,
         initialCameraPosition: _kGooglePlex,
         onMapCreated: (GoogleMapController controller) {
@@ -144,69 +123,27 @@ bool _isCircle=false;
         },
         myLocationEnabled: true,
         markers: Set<Marker>.of(markers.values),
-        circles: _circles,
-        onTap: (point){
-          if(_isCircle){
-            setState(() {
-              _circles.clear();
-              _setCircles(point);
-            });
-          }
-        },
+        circles: Set<Circle>.of(circles.values),
       ),
-        floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
-    children: [
-    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-    child: Icon(Icons.location_searching),
-    label: "current location",
-    onTap: ()=>_currentLocation()),
-    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-    child: Icon(Icons.map),
-    label: "Normal Map",
-    onTap: ()=>_changeMapType()
-    ),
-    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-    child: Icon(Icons.map),
-    label: "Satellite Map",
-    onTap: ()=>_changeMapType2()
-    ),
-    SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-    child: Icon(Icons.check_circle),
-    label: "Circle",
-    onTap: () {
-    _isCircle = true;
-    radius = 50;
-    return radius = 80.0;
-    }
-//             showDialog(context: context,
-//           child: AlertDialog(backgroundColor: Colors.grey[900],
-//           title: Text("Choose the radius (M)",
-//           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white), ),
-//             content: Padding(
-//               padding: EdgeInsets.all(8),
-//               child: Material(color: Colors.black,
-//               child: TextField(style: TextStyle(fontSize: 16,color:Colors.white ),
-//                 decoration: InputDecoration(icon: Icon(Icons.zoom_out_map),
-//                 hintText: 'Ex: 100',suffixText: 'Meters',),
-//                 keyboardType: TextInputType.numberWithOptions(),
-//                 onChanged: (input)  {
-//                 setState(() {
-//                   radius=double.parse(input);  });
-//                 },),)),
-//
-//
-//           actions: <Widget>[
-//             FlatButton(  onPressed: ()=>Navigator.pop(context),
-//             child: Text('OK',style: TextStyle(fontWeight: FontWeight.bold),
-//             )),],));},
-
-
-    ),
-    ],) ,
-
-      );
+      floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
+        children: [
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.location_searching),
+              label: "current location",
+              onTap: ()=>_currentLocation()),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.map),
+              label: "Normal Map",
+              onTap: ()=>_changeMapType()
+          ),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.map),
+              label: "Satellite Map",
+              onTap: ()=>_changeMapType2()
+          ),
+        ],) ,
+    );
   }
-
   void _currentLocation() async {
     final GoogleMapController controller = await _controller.future;
     LocationData currentLocation;
@@ -216,7 +153,6 @@ bool _isCircle=false;
     } on Exception {
       currentLocation = null;
     }
-
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         bearing: 0,
@@ -225,5 +161,6 @@ bool _isCircle=false;
       ),
     ));
   }
+
 
 }
