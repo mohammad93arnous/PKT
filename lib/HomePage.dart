@@ -12,7 +12,9 @@ import 'AUTH/Auth.dart';
 import 'RegistertionAccount.dart';
 import 'SnackBar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';//new
-import 'dart:async';//new
+import 'dart:async';
+
+import 'models/CustomText.dart';//new
 
 class HomePage extends StatefulWidget {
   HomePage({this.accountName, this.email, this.deviceName});
@@ -29,13 +31,13 @@ class _HomePageState extends State<HomePage> {
   FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   new FlutterLocalNotificationsPlugin();
-
-  final _scaffoldKey = GlobalKey(); // Scaffold Key
+  TextEditingController forgetPasswordEmailController = TextEditingController();
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var mymap = {};
   var title = '';
   var body = {};
   var mytoken = '';
-
+  String forgetPassEmail;
 
   bool _obscureTextLogin = true;
   Auth auth = new Auth();
@@ -278,13 +280,119 @@ class _HomePageState extends State<HomePage> {
                     ),
                     color: Colors.white70,
                   ),
+
                 ],
               ),
             ),
+            SizedBox(
+              height: 35,
+            ),
+            InkWell(
+              onTap: (){
+                showForgetPassBottomSheet(context);
+              },
+              child: Text('Forgot Password ?'),
+            )
           ],
         ),
       ),
     );
+  }
+  showForgetPassBottomSheet(BuildContext pnContext) {
+    return _scaffoldKey.currentState.showBottomSheet((context) {
+      return Container(
+        height: 375,
+        decoration: BoxDecoration(
+            color: Colors.green.withOpacity(0.7),
+            border: Border.all(
+                color: Colors.white54,
+                width: 1),
+            borderRadius: BorderRadius.only(topRight: Radius.circular(16), topLeft: Radius.circular(16))),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Icon(
+                      Icons.vpn_key,
+                      color: Colors.amber,
+                      size: 100,
+                    )),
+              ),
+              flex: 5,
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: 16, right: 16),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Please enter Your Email',
+                      style: CustomTextStyle.textFormFieldMedium.copyWith(fontSize: 16, color: Colors.white),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        height: 1,
+                      ),
+                      controller: forgetPasswordEmailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textAlign: TextAlign.left,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 1.0, style: BorderStyle.solid)),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 1.0, style: BorderStyle.solid)),
+                        labelText: '********@Provider.com',
+                        labelStyle: TextStyle(color: Colors.white),
+                        focusColor: Colors.green,
+                        hoverColor: Colors.green,
+                        isDense: true,
+                        counterStyle: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                      ),
+                      onChanged: (value){
+                        if(value==null){
+                          snackError('Please Enter Valid Email', context);
+                        }else{
+                          setState(() {
+                            forgetPassEmail=value;
+                          });
+                        }
+                      },
+                    ),
+                    SizedBox(
+                      height: 18,
+                    ),
+                    RaisedButton(
+                      onPressed: () async {
+                        if (forgetPassEmail==null){
+                          snackError('Please Enter Valid Email', context);
+                          showForgetPassBottomSheet(pnContext);
+                        }else {
+                         await FirebaseAuth.instance.sendPasswordResetEmail(email: forgetPassEmail);
+                          Navigator.of(pnContext).pop();
+                        }
+                      },
+                      padding: EdgeInsets.only(left: 48, right: 48),
+                      child: Text(
+                        "Send Reset Email",
+                        style: CustomTextStyle.textFormFieldMedium.copyWith(color: Colors.white),
+                      ),
+                      color: Colors.amber,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
+                    )
+                  ],
+                ),
+              ),
+              flex: 5,
+            )
+          ],
+        ),
+      );
+    }, shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))), backgroundColor: Colors.white, elevation: 2);
   }
 //  showNotification() async{ //for local notif
 //    var android = new AndroidNotificationDetails(

@@ -32,6 +32,7 @@ class _UserPofState extends State<UserPof> {
   DocumentSnapshot userData;
   FirebaseUser user;
   String editedUserName;
+  String editedDeviceName;
   QuerySnapshot deviceFBData;
   ////// Variables filled from FB//////
 
@@ -153,6 +154,101 @@ class _UserPofState extends State<UserPof> {
     }, shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))), backgroundColor: Colors.black, elevation: 2);
   }
 
+  showEditDeviceInfoBottomSheet(BuildContext context,String docID) {
+    return _scaffoldKey.currentState.showBottomSheet((context) {
+      return Container(
+        height: 400,
+        decoration: BoxDecoration(color: Colors.lightGreen.shade300.withOpacity(0.70), border: Border.all(color: Colors.white54, width: 1), borderRadius: BorderRadius.only(topRight: Radius.circular(16), topLeft: Radius.circular(16))),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                      size: 120,
+                    )),
+              ),
+              flex: 5,
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: 16, right: 16),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Change Device Name ?',
+                      style: CustomTextStyle.textFormFieldMedium.copyWith(fontSize: 16, color: Colors.white),
+                    ),
+//                  Text(
+//                    'Edit User Name',
+//                    style: CustomTextStyle.textFormFieldMedium.copyWith(fontSize: 16, color: Colors.white),
+//                  ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        height: 1,
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      textAlign: TextAlign.left,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 1.0, style: BorderStyle.solid)),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 1.0, style: BorderStyle.solid)),
+                        labelText: 'Edit Your Device Name',
+                        labelStyle: TextStyle(color: Colors.amberAccent.shade700),
+                        focusColor: Colors.black,
+                        hoverColor: Colors.black,
+                        isDense: true,
+                      ),
+                      onChanged: (value) {
+                        if (value == null) {
+                          snackError('Invalid', context);
+                        } else {
+                          if (!mounted) return;
+                          setState(() {
+                            editedDeviceName = value;
+                          });
+                        }
+                      },
+                    ),
+                    SizedBox(
+                      height: 18,
+                    ),
+                    RaisedButton(
+                      onPressed: () async {
+                        if (!mounted) return;
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        await Firestore.instance.collection('Devices').document(docID).updateData({
+                          'DeviceName': editedDeviceName,
+                        });
+                        Navigator.pop(context);
+                        if (!mounted) return;
+                      },
+                      padding: EdgeInsets.only(left: 48, right: 48),
+                      child: Text(
+                        "Change",
+                        style: CustomTextStyle.textFormFieldMedium.copyWith(color: Colors.amberAccent.shade700),
+                      ),
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
+                    )
+                  ],
+                ),
+              ),
+              flex: 5,
+            )
+          ],
+        ),
+      );
+    }, shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))), backgroundColor: Colors.black, elevation: 2);
+  }
+
 // get devices list from FB through UserData Variable
   getDevicesData(DocumentSnapshot data) async {
     if (data == null) {
@@ -225,6 +321,7 @@ class _UserPofState extends State<UserPof> {
             ListTile(
               title: Text("Live Location"),
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowMap()));
               },
               trailing: Icon(Icons.location_on),
@@ -306,80 +403,133 @@ class _UserPofState extends State<UserPof> {
                 itemBuilder: (context, i) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.lightGreen.shade300.withOpacity(0.70),
-                        border: Border.all(color: Colors.white54, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                      ),
-                      child: Stack(
-                        children: <Widget>[
-                          Positioned(
-                            top: 15,
-                            left: 9,
-                            child: CircleAvatar(
-                              radius: 25.0,
-                              backgroundImage: AssetImage('assets/band.png'),
-                            ),
-                          ),
-                          Positioned(
-                            top: 8,
-                            left: 160,
-                            child: Text(
-                              deviceFBData.documents[i].data['DeviceName'].toString(),
-                              style: TextStyle(color: Colors.black, fontSize: 19, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          Positioned(
-                            top: 35,
-                            left: 75,
-                            child: Text(
-                              'Distance From You: ',
-                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          Positioned(
-                            top: 35,
-                            left: 212,
-                            child: Text(
-                              deviceFBData.documents[i].data['DistanceAway'].toString() + ' meters',
-                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          Positioned(
-                            top: 55,
-                            left: 75,
-                            child: Text(
-                              'Loctation:',
-                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          Positioned(
-                            top: 55,
-                            left: 150,
-                            child: Text(
-                              'Dammam,Alsalam',
-                              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          Positioned(
-                              top: 30,
-                              left: 370,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowGivenDeviceMap(
-                                    uID: uID,
-                                    deviceID: deviceFBData.documents[i].data['DeviceSerialNumber'].toString(),
-                                  )));
-                                },
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.black,
-                                  size: 20,
+                    child: InkWell(
+                      onLongPress: (){
+                        showModalBottomSheet(
+                            context: _scaffoldKey.currentContext,
+                            backgroundColor: Colors.lightGreen.shade300.withOpacity(0.40),
+                            builder: (BuildContext context){
+                              return Container(
+                                color: Colors.transparent,
+                                child:Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Wrap(
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          RaisedButton(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(24),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              showEditDeviceInfoBottomSheet(context,deviceFBData.documents[i].documentID);
+                                            },
+                                            color: Colors.amberAccent.shade700, //Colors.blue.withOpacity(0.5),
+                                            child: Text('Edit', style: TextStyle(color: Colors.white,)),
+                                          ),
+                                          RaisedButton(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(24),
+                                            ),
+                                            onPressed: () async{
+                                              Navigator.of(context).pop();
+                                              String docIdDeleted=deviceFBData.documents[i].documentID;
+                                              await Firestore.instance.collection('Devices').document(docIdDeleted).delete();
+                                              await Firestore.instance.collection('SerialNumbers').document(docIdDeleted).updateData({
+                                                'ReservedUID':" ",
+                                                'SerialReserved':false
+                                              });
+                                            },
+                                            color: Colors.amberAccent.shade700, //Colors.blue.withOpacity(0.5),
+                                            child: Text('Delete',
+                                                style: TextStyle(color: Colors.red)),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              )),
-                        ],
+                              );
+                            });
+                      },
+                      child: Container(
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen.shade300.withOpacity(0.70),
+                          border: Border.all(color: Colors.white54, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
+                        child: Stack(
+                          children: <Widget>[
+                            Positioned(
+                              top: 15,
+                              left: 9,
+                              child: CircleAvatar(
+                                radius: 25.0,
+                                backgroundImage: AssetImage('assets/band.png'),
+                              ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              left: 160,
+                              child: Text(
+                                deviceFBData.documents[i].data['DeviceName'].toString(),
+                                style: TextStyle(color: Colors.black, fontSize: 19, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Positioned(
+                              top: 35,
+                              left: 75,
+                              child: Text(
+                                'Distance From You: ',
+                                style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Positioned(
+                              top: 35,
+                              left: 212,
+                              child: Text(
+                                deviceFBData.documents[i].data['DistanceAway'].toString() + ' meters',
+                                style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            Positioned(
+                              top: 55,
+                              left: 75,
+                              child: Text(
+                                'Loctation:',
+                                style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            Positioned(
+                              top: 55,
+                              left: 150,
+                              child: Text(
+                                'Dammam,Alsalam',
+                                style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            Positioned(
+                                top: 30,
+                                left: 370,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ShowGivenDeviceMap(
+                                      uID: uID,
+                                      deviceID: deviceFBData.documents[i].data['DeviceSerialNumber'].toString(),
+                                    )));
+                                  },
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.black,
+                                    size: 20,
+                                  ),
+                                )),
+                          ],
+                        ),
                       ),
                     ),
                   );

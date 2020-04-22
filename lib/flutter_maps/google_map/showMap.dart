@@ -9,6 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
+import '../../main.dart';
+
 String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
 
 //'pk.eyJ1IjoiaWdhdXJhYiIsImEiOiJjazFhOWlkN2QwYzA5M2RyNWFvenYzOTV0In0.lzjuSBZC6LcOy_oRENLKCg',
@@ -26,7 +28,7 @@ class _ShowMapState extends State<ShowMap> {
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   BitmapDescriptor pinLocationIcon;
   QuerySnapshot fbData;
-  double radius=80.0;
+
   bool clientsToggle=false;
   GoogleMapController mapController;
   @override
@@ -66,6 +68,7 @@ class _ShowMapState extends State<ShowMap> {
         .where('UID',isEqualTo: widget.uID).snapshots();
     deviceData.listen((QuerySnapshot devData){
       if(devData.documents.isNotEmpty){
+        if (!mounted) return;
         setState(() {
           clientsToggle = true;
           fbData=devData;
@@ -141,20 +144,24 @@ class _ShowMapState extends State<ShowMap> {
               child: Icon(Icons.add_circle_outline,color: Colors.green),
               label: "Increse Circle",
               onTap: (){
+                if (!mounted) return;
             setState(() {
               radius=radius+5;
             });
             crearmarcadores();
+                print(radius.toString());
               }
           ),
           SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
               child: Icon(Icons.remove_circle_outline,color: Colors.red,),
               label: "Decrese Circle",
               onTap: (){
+                if (!mounted) return;
             setState(() {
               radius=radius-5;
             });
             crearmarcadores();
+                print(radius.toString());
               }
           ),
         ],) ,

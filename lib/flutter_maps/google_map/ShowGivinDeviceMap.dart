@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
+import '../../main.dart';
+
 String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
 
 //'pk.eyJ1IjoiaWdhdXJhYiIsImEiOiJjazFhOWlkN2QwYzA5M2RyNWFvenYzOTV0In0.lzjuSBZC6LcOy_oRENLKCg',
@@ -27,7 +29,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   BitmapDescriptor pinLocationIcon;
   DocumentSnapshot fbData;
-  double radius=80.0;
+
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
   @override
   void initState(){
@@ -150,6 +152,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
                   radius=radius+5;
                 });
                 crearmarcadores();
+                print(radius.toString());
               }
           ),
           SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
@@ -160,6 +163,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
                   radius=radius-5;
                 });
                 crearmarcadores();
+                print(radius.toString());
               }
           ),
         ],) ,

@@ -5,7 +5,7 @@ import 'flutter_maps/google_map/showMap.dart';
 
 String result = "";
 String deviceNameP='';
-
+double radius=80.0;
 void main() {
 //MapView.setApiKey("AIzaSyDVlsGtxNYsdrq1G0KGg2yTJiHUBtpId7g");
   runApp(MaterialApp(

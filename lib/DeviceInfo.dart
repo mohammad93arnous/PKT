@@ -412,6 +412,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
     if (widget.email == null) {
       snackError('Email is Empty', context);
     } else {
+      await FirebaseAuth.instance.signOut();
       try {
         user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email:widget.email, password: widget.password);
