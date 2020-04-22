@@ -27,7 +27,8 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   BitmapDescriptor pinLocationIcon;
   DocumentSnapshot fbData;
-
+  double radius=80.0;
+  Map<CircleId, Circle> circles = <CircleId, Circle>{};
   @override
   void initState(){
     crearmarcadores();
@@ -85,6 +86,21 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
       // adding a new marker to map
       markers[markerId] = marker;
     });
+    var circleIdVal=lugaresid;
+    final CircleId circleId = CircleId(circleIdVal);
+    final Circle circle=Circle(
+        circleId: circleId,
+        center: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
+        fillColor: Colors.redAccent.withOpacity(0.5),
+        strokeWidth: 3,
+        strokeColor: Colors.redAccent,
+        radius: radius
+    );
+    if (!mounted) return;
+    setState(() {
+      // adding a new marker to map
+      circles[circleId] = circle;
+    });
   }
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -103,6 +119,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
         },
         myLocationEnabled: true,
         markers: Set<Marker>.of(markers.values),
+        circles: Set<Circle>.of(circles.values),
       ),
 //      floatingActionButton: FloatingActionButton.extended(
 //        onPressed: _currentLocation,
@@ -124,6 +141,26 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
               child: Icon(Icons.map),
               label: "Satellite Map",
               onTap: ()=>_changeMapType2()
+          ),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.add_circle_outline,color: Colors.green),
+              label: "Increse Circle",
+              onTap: (){
+                setState(() {
+                  radius=radius+5;
+                });
+                crearmarcadores();
+              }
+          ),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.remove_circle_outline,color: Colors.red,),
+              label: "Decrese Circle",
+              onTap: (){
+                setState(() {
+                  radius=radius-5;
+                });
+                crearmarcadores();
+              }
           ),
         ],) ,
     );

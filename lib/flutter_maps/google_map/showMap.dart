@@ -27,7 +27,8 @@ class _ShowMapState extends State<ShowMap> {
   BitmapDescriptor pinLocationIcon;
   QuerySnapshot fbData;
   double radius=80.0;
-
+  bool clientsToggle=false;
+  GoogleMapController mapController;
   @override
   void initState(){
     crearmarcadores();
@@ -67,10 +68,10 @@ class _ShowMapState extends State<ShowMap> {
       if(devData.documents.isNotEmpty){
         setState(() {
           clientsToggle = true;
+          fbData=devData;
         });
         for(int i= 0; i < devData.documents.length; i++) {
           initMarker(devData.documents[i].data, devData.documents[i].documentID);
-
         }
       }
     });
@@ -91,7 +92,7 @@ class _ShowMapState extends State<ShowMap> {
     });
     var circleIdVal=lugaresid;
     final CircleId circleId = CircleId(circleIdVal);
-  final Circle circle=Circle(
+    final Circle circle=Circle(
         circleId: circleId,
         center: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
         fillColor: Colors.redAccent.withOpacity(0.5),
@@ -111,21 +112,16 @@ class _ShowMapState extends State<ShowMap> {
     zoom: 14.4746,
   );
 
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body:
-      GoogleMap(
-        mapType:_defaultMapType,
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-        myLocationEnabled: true,
-        markers: Set<Marker>.of(markers.values),
-        circles: Set<Circle>.of(circles.values),
-      ),
-      floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
+      body:MapBody(context),
+      floatingActionButton:SpeedDial(
+        backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),
+        animatedIcon:AnimatedIcons.list_view,
+        marginRight: 10,
+        marginBottom: 90,// Scale of height
         children: [
           SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
               child: Icon(Icons.location_searching),
@@ -141,9 +137,108 @@ class _ShowMapState extends State<ShowMap> {
               label: "Satellite Map",
               onTap: ()=>_changeMapType2()
           ),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.add_circle_outline,color: Colors.green),
+              label: "Increse Circle",
+              onTap: (){
+            setState(() {
+              radius=radius+5;
+            });
+            crearmarcadores();
+              }
+          ),
+          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              child: Icon(Icons.remove_circle_outline,color: Colors.red,),
+              label: "Decrese Circle",
+              onTap: (){
+            setState(() {
+              radius=radius-5;
+            });
+            crearmarcadores();
+              }
+          ),
         ],) ,
     );
   }
+  Widget MapBody(BuildContext context){
+    return Column(
+      children: <Widget>[
+        Stack(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: double.infinity,
+              color: Colors.black,
+              child: GoogleMap(
+                mapType:_defaultMapType,
+                initialCameraPosition: _kGooglePlex,
+                onMapCreated: (GoogleMapController controller) {
+                  _controller.complete(controller);
+                },
+                myLocationEnabled: true,
+                markers: Set<Marker>.of(markers.values),
+                circles: Set<Circle>.of(circles.values),
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).size.height-95.0,// Card Position
+              left: 10.0,
+              child: Container(
+                height: 100.0,
+                width: MediaQuery.of(context).size.width,
+                child:clientsToggle ?
+                ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.all(8.0),
+                  itemCount: fbData.documents.length,
+                  itemBuilder: (context,i){
+                    return Padding(
+                      padding: EdgeInsets.only(left: 2.0,top: 10.0),
+                      child: InkWell(
+                        onTap: (){
+                          zoomInTarget(
+                              fbData.documents[i].data['Location'].latitude,
+                              fbData.documents[i].data['Location'].longitude
+                          );
+                        },
+                        child: Container(
+                          height: 100.0,
+                          width: 125.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: Colors.lightGreen.shade700.withOpacity(0.50),
+                          ),
+                          child: Center(
+                            child: Text(fbData.documents[i].data['DeviceName']),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ):Container(height: 1.0,width: 1.0,),
+              ),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  zoomInTarget(deviceLat,deviceLong) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(
+                deviceLat,
+                deviceLong
+            ),
+            zoom: 16.0,
+            bearing: 80.0,
+            tilt: 30.0
+        ),
+    ));
+  }
+
   void _currentLocation() async {
     final GoogleMapController controller = await _controller.future;
     LocationData currentLocation;
@@ -161,6 +256,5 @@ class _ShowMapState extends State<ShowMap> {
       ),
     ));
   }
-
 
 }
