@@ -10,7 +10,8 @@ import 'HomePage.dart';
 //******************* Importing all needed packages for this class *****************************
 
 class RegistertionAccount extends StatefulWidget {
-  RegistertionAccount({this.deviceName,this.deviceSerial,this.result});
+  RegistertionAccount({this.deviceName, this.deviceSerial, this.result});
+
   @override
   State<StatefulWidget> createState() => new _RegistertionAccountState();
   String deviceName;
@@ -76,15 +77,12 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     if (loginPasswordController.text != null &&
         loginPasswordController.text.length < 4) {
       snackError('Passwoed must be more than 4', context);
-
     } else if (loginRePasswordController.text != null &&
         loginRePasswordController.text.length < 4) {
       snackError('Passwoed must be more than 4', context);
-
     } else if (loginPasswordController.text != loginRePasswordController.text &&
         loginRePasswordController.text != loginPasswordController.text) {
       snackError('Passwoed is not matched', context);
-
     } else {
       setState(() {
         passValidated = true;
@@ -92,7 +90,6 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     }
     return null;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +112,10 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(30.0),
-              child: TextFormField(inputFormatters: [WhitelistingTextInputFormatter(RegExp("[a-zA-Z 0-9 _-]"))],
+              child: TextFormField(
+                inputFormatters: [
+                  WhitelistingTextInputFormatter(RegExp("[a-zA-Z 0-9 _-]"))
+                ],
                 controller: loginAccountName,
                 keyboardType: TextInputType.text,
                 style: TextStyle(
@@ -137,17 +137,18 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
                 },
               ),
             ),
-
             Padding(
               padding: EdgeInsets.all(30),
               child: TextField(
-                textAlign: TextAlign.start, // vTextAlignment,
+                textAlign: TextAlign.start,
+                // vTextAlignment,
                 controller: loginPasswordController,
                 obscureText: _obscureTextLogin,
                 style: TextStyle(
                     fontFamily: "WorkSansSemiBold",
                     fontSize: 16.0,
-                    color: Colors.black), //Colors.black),
+                    color: Colors.black),
+                //Colors.black),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderSide: BorderSide(width: 10, color: Colors.green),
@@ -180,13 +181,15 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
             Padding(
               padding: EdgeInsets.all(30),
               child: TextField(
-                textAlign: TextAlign.start, // vTextAlignment,
+                textAlign: TextAlign.start,
+                // vTextAlignment,
                 controller: loginRePasswordController,
                 obscureText: _obscureTextRePassLogin,
                 style: TextStyle(
                     fontFamily: "WorkSansSemiBold",
                     fontSize: 16.0,
-                    color: Colors.black), //Colors.black),
+                    color: Colors.black),
+                //Colors.black),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderSide: BorderSide(width: 10, color: Colors.green),
@@ -218,41 +221,39 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
             ),
             Padding(
               padding: const EdgeInsets.all(2.0),
-              child:Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-              RaisedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => HomePage()));
-                },
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
+                  RaisedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) => HomePage()));
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    ),
+                    color: Colors.white70,
                   ),
-                ),
-                color: Colors.white70,
-              ),
-
-               RaisedButton(
-                onPressed: () {
-                  validatingBeforeNavigate();
-                },
-                child: Text(
-                  'Next',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
+                  RaisedButton(
+                    onPressed: () {
+                      validatingBeforeNavigate();
+                    },
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    ),
+                    color: Colors.white70,
                   ),
-                ),
-                color: Colors.white70,
+                ],
               ),
-              ],
             ),
-    ),
-
           ],
         ),
       ),
@@ -264,22 +265,20 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     print(userNameValidated.toString());
     print(passValidated.toString());
     if (accountName == null) {
-     return snackError('Account Name cannot be empty', context);
-    }else if (loginAccountName.text.contains('- * / + = ( ) % @ !', 0) ==
+      return snackError('Account Name cannot be empty', context);
+    } else if (loginAccountName.text.contains('- * / + = ( ) % @ !', 0) ==
         true) {
-       return snackError('Name Must Contain Text Only', context);
-    }
-    else if (_loginPassword == null) {
+      return snackError('Name Must Contain Text Only', context);
+    } else if (_loginPassword == null) {
       snackError('Password cannot be empty', context);
-      passValidated=false;//new
+      passValidated = false; //new
     } else if (loginRePassword == null) {
       snackError('Re-Password cannot be empty', context);
-      passValidated=false;//new
+      passValidated = false; //new
     } else if (loginPasswordController.text != loginRePasswordController.text &&
         loginRePasswordController.text != loginPasswordController.text) {
       snackError('Passwoed is not matched', context);
-    }
-    else {
+    } else {
       accountNameValidation();
       passwordValidation();
       if (userNameValidated == false && passValidated == false) {
@@ -293,14 +292,12 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
         if (userNameValidated == false && passValidated == false) {
         } else {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  LinkWithEmail(
+              builder: (BuildContext context) => LinkWithEmail(
                     accountName: accountName,
                     password: _loginPassword,
-                  )
-          ));
+                  )));
         }
       }
     }
   }
-}//********************************The End of the Class  ********************************
+} //********************************The End of the Class  ********************************

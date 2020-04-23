@@ -8,8 +8,12 @@ import 'main.dart';
 //******************* Importing all needed packages for this class *****************************
 class AddingDevice extends StatefulWidget {
   AddingDevice({this.uID});
+
   @override
-  AddingDeviceState createState() {return new AddingDeviceState();}
+  AddingDeviceState createState() {
+    return new AddingDeviceState();
+  }
+
   String uID;
 }
 
@@ -47,7 +51,6 @@ class AddingDeviceState extends State<AddingDevice> {
         result = "Unknown Error $ex";
       });
     }
-
   }
 
   @override
@@ -107,4 +110,4 @@ class AddingDeviceState extends State<AddingDevice> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-}//********************************The End of the Class  ********************************
+} //********************************The End of the Class  ********************************

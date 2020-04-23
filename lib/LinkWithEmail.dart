@@ -4,9 +4,16 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:pktapp/DeviceInfo.dart';
 import 'SnackBar.dart';
+
 //******************* Importing all needed packages for this class *****************************
 class LinkWithEmail extends StatefulWidget {
-  LinkWithEmail({this.accountName, this.password, this.deviceName, this.deviceSerial, this.result});
+  LinkWithEmail(
+      {this.accountName,
+      this.password,
+      this.deviceName,
+      this.deviceSerial,
+      this.result});
+
   @override
   State<StatefulWidget> createState() => new _LinkWithEmailState();
   String accountName;
@@ -19,7 +26,6 @@ class LinkWithEmail extends StatefulWidget {
 class _LinkWithEmailState extends State<LinkWithEmail> {
   final _scaffoldKey = GlobalKey(); // Scaffold Key
   String email;
-
 
   @override
   void initState() {
@@ -80,7 +86,6 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                 },
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Row(
@@ -101,18 +106,18 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      if(email==null){
+                      if (email == null) {
                         snackError('Email cannot be empty', context);
-                      }else{
-                        if(email.length<=5|| email.contains('@')==false){
+                      } else {
+                        if (email.length <= 5 || email.contains('@') == false) {
                           snackError('Email Invalid', context);
-                        }else{
+                        } else {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) => DeviceInfo(
-                                accountName: widget.accountName,
-                                email: email,
-                                password: widget.password,
-                              )));
+                                    accountName: widget.accountName,
+                                    email: email,
+                                    password: widget.password,
+                                  )));
                         }
                       }
                     },
@@ -133,4 +138,4 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
       ),
     );
   }
-}//********************************The End of the Class  ********************************
+} //********************************The End of the Class  ********************************
