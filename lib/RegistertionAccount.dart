@@ -7,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'LinkWithEmail.dart';
 import 'SnackBar.dart';
 import 'HomePage.dart';
-
+//******************* Importing all needed packages for this class *****************************
 
 class RegistertionAccount extends StatefulWidget {
   RegistertionAccount({this.deviceName,this.deviceSerial,this.result});
@@ -137,22 +137,7 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
                 },
               ),
             ),
-//            Padding(
-//              padding: const EdgeInsets.all(30.0),
-//              child: PasswordField(
-//                color: Colors.black,
-//                hasFloatingPlaceholder: true,
-//                pattern: r'.*[a-zA-Z0-9 @$#.*_-].*',
-//                border: OutlineInputBorder(
-//                    borderSide: BorderSide(width: 2, color: Colors.green),
-//                    borderRadius: BorderRadius.circular(20.0)),
-//                focusedBorder: OutlineInputBorder(
-//                    borderRadius: BorderRadius.circular(20.0),
-//                    borderSide: BorderSide(width: 0.5, color: Colors.green)),
-//                hintText: "Input Password",
-//                errorMessage: "Must Contain Special Character  or numbers.",
-//              ),
-//            ),
+
             Padding(
               padding: EdgeInsets.all(30),
               child: TextField(
@@ -251,7 +236,6 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
                 color: Colors.white70,
               ),
 
-
                RaisedButton(
                 onPressed: () {
                   validatingBeforeNavigate();
@@ -319,4 +303,4 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
       }
     }
   }
-}
+}//********************************The End of the Class  ********************************

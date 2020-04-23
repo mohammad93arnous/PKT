@@ -11,7 +11,7 @@ import 'SnackBar.dart';
 import 'flutter_maps/google_map/ShowGivinDeviceMap.dart';
 import 'flutter_maps/google_map/showMap.dart';
 import 'models/CustomText.dart';
-
+//******************* Importing all needed packages for this class *****************************
 class UserPof extends StatefulWidget {
   UserPof({this.uID, this.deviceName, this.deviceSerial, this.accountName, this.email});
   @override
@@ -88,10 +88,6 @@ class _UserPofState extends State<UserPof> {
                       'Change User Name ?',
                       style: CustomTextStyle.textFormFieldMedium.copyWith(fontSize: 16, color: Colors.white),
                     ),
-//                  Text(
-//                    'Edit User Name',
-//                    style: CustomTextStyle.textFormFieldMedium.copyWith(fontSize: 16, color: Colors.white),
-//                  ),
                     SizedBox(
                       height: 15,
                     ),
@@ -182,10 +178,7 @@ class _UserPofState extends State<UserPof> {
                       'Change Device Name ?',
                       style: CustomTextStyle.textFormFieldMedium.copyWith(fontSize: 16, color: Colors.white),
                     ),
-//                  Text(
-//                    'Edit User Name',
-//                    style: CustomTextStyle.textFormFieldMedium.copyWith(fontSize: 16, color: Colors.white),
-//                  ),
+
                     SizedBox(
                       height: 15,
                     ),
@@ -249,7 +242,7 @@ class _UserPofState extends State<UserPof> {
     }, shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))), backgroundColor: Colors.black, elevation: 2);
   }
 
-// get devices list from FB through UserData Variable
+// get devices list from Firebase through UserData Variable
   getDevicesData(DocumentSnapshot data) async {
     if (data == null) {
       getUserInfo().whenComplete((){
@@ -541,4 +534,4 @@ class _UserPofState extends State<UserPof> {
       );
     }
   }
-}
+}//********************************The End of the Class  ********************************

@@ -1,14 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:pktapp/DeviceInfo.dart';
 import 'SnackBar.dart';
-import 'userProfile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-
+//******************* Importing all needed packages for this class *****************************
 class LinkWithEmail extends StatefulWidget {
   LinkWithEmail({this.accountName, this.password, this.deviceName, this.deviceSerial, this.result});
   @override
@@ -29,7 +25,6 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -85,23 +80,7 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                 },
               ),
             ),
-//            Padding(
-//              padding: const EdgeInsets.all(30.0),
-//              child: TextField(
-//                keyboardType: TextInputType.text,
-//                style: TextStyle(color: Colors.black),
-//                decoration: InputDecoration(
 
-//                  border: OutlineInputBorder(
-//                      borderSide: BorderSide(width: 2, color: Colors.green),
-//                      borderRadius: BorderRadius.circular(20.0)),
-//                  focusedBorder: OutlineInputBorder(
-//                      borderRadius: BorderRadius.circular(20.0),
-//                      borderSide: BorderSide(width: 0.5, color: Colors.green)),
-//                  hintText: "Verification code",
-//                ),
-//              ),
-//            ),
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Row(
@@ -154,4 +133,4 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
       ),
     );
   }
-}
+}//********************************The End of the Class  ********************************

@@ -5,13 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geolocator/geolocator.dart'as prefix0;
-import 'package:location/location.dart';
 import 'SnackBar.dart';
 import 'package:barcode_scan/barcode_scan.dart';
-import 'RegistertionAccount.dart';
 import 'main.dart';
 import 'userProfile.dart';
-
+//******************* Importing all needed packages for this class *****************************
 class AddDeviceAfterAuth extends StatefulWidget {
   AddDeviceAfterAuth({this.result,this.uID});
   @override
@@ -216,23 +214,6 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
               ),
             ),
 
-//            Padding(
-//              padding: const EdgeInsets.all(30.0),
-//              child: TextField(
-//                keyboardType: TextInputType.text,
-//                style: TextStyle(color: Colors.black),
-//                decoration: InputDecoration(
-
-//                  border: OutlineInputBorder(
-//                      borderSide: BorderSide(width: 2, color: Colors.green),
-//                      borderRadius: BorderRadius.circular(20.0)),
-//                  focusedBorder: OutlineInputBorder(
-//                      borderRadius: BorderRadius.circular(20.0),
-//                      borderSide: BorderSide(width: 0.5, color: Colors.green)),
-//                  hintText: "Verification code",
-//                ),
-//              ),
-//            ),
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Row(
@@ -374,4 +355,4 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
       'ReservedUID':widget.uID,
     }));
   }
-}
+}//********************************The End of the Class  ********************************

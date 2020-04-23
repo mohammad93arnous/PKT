@@ -6,16 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pktapp/DeviceInfo.dart';
 import 'package:pktapp/userProfile.dart';
 import 'AUTH/Auth.dart';
 import 'RegistertionAccount.dart';
 import 'SnackBar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';//new
 import 'dart:async';
-
 import 'models/CustomText.dart';//new
-
+//******************* Importing all needed packages *****************************
 class HomePage extends StatefulWidget {
   HomePage({this.accountName, this.email, this.deviceName});
 
@@ -112,6 +110,7 @@ class _HomePageState extends State<HomePage> {
 
     });
   }
+
   Future onLogIn() async {
     try {
       user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
@@ -156,29 +155,6 @@ class _HomePageState extends State<HomePage> {
               ),
               height: 200,
             ),
-//           InkWell(
-//             child: Text("Add A Device", style: TextStyle(
-//                 fontStyle: FontStyle.italic,
-//                 fontSize: 30.0,
-//                 color: Colors.indigo)), onTap: () => debugPrint("Well Done"),
-//           ),
-            //CustomButton(),
-
-//            Center(
-//              child: Padding(
-//                padding: const EdgeInsets.all(30.0),
-//                child: Text(
-//                  "Welcome To PKT APP",
-//                  // textDirection: TextDirection.ltr,
-//                  style: TextStyle(
-//                      color: Colors.blue.withOpacity(0.90),
-//                      fontWeight: FontWeight.bold,
-//                      fontSize: 25.5,
-//                      fontStyle: FontStyle.italic),
-//                ),
-//              ),
-//            ),
-
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: TextField(
@@ -201,11 +177,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-//          Padding(
-//            padding: const EdgeInsets.all(20.0),
-//            child: TextField(keyboardType: TextInputType.visiblePassword,decoration: InputDecoration(hintText: "Input password",prefixIcon: Icon(Icons.lock)),),
-//          ),
-            //Password Field
+
             Padding(
               padding: EdgeInsets.all(30),
               child: TextField(
@@ -394,40 +366,6 @@ class _HomePageState extends State<HomePage> {
       );
     }, shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))), backgroundColor: Colors.white, elevation: 2);
   }
-//  showNotification() async{ //for local notif
-//    var android = new AndroidNotificationDetails(
-//        "channelId", "channelName", "channelDescription"
-//        ,priority: Priority.High,importance: Importance.Max);
-//    var iOS = new IOSNotificationDetails();
-//
-//    var platform = new NotificationDetails(android, iOS);
-//    await flutterLocalNotificationsPlugin.show(
-//        0, 'PKT APP', 'Kid cross the aeria' , platform,payload: 'Track your Kid');
-//
-//  }
-}
 
-//
-//class CustomButton extends StatelessWidget{
-//@override
-//  Widget build(BuildContext context) {
-//
-//    return GestureDetector(
-//      onTap: (){
-//        final snackBar=SnackBar(content: Text("Device Has been Added"),);
-//        Scaffold.of(context).showSnackBar(snackBar);
-//
-//      },
-//child: Container(
-//
-//  padding: EdgeInsets.all(20),
-//  decoration: BoxDecoration(
-//    color:Colors.black,
-//    borderRadius: BorderRadius.circular(15)
-//  ),
-//  child: Text("Add New Device"),
-//),
-//    );
-//  }
-//
-//}
+}//********************************The End of the Class  ********************************
+

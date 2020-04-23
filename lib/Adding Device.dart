@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:pktapp/DeviceInfo.dart';
 import 'main.dart';
 
-
+//******************* Importing all needed packages for this class *****************************
 class AddingDevice extends StatefulWidget {
   AddingDevice({this.uID});
   @override
@@ -47,6 +47,7 @@ class AddingDeviceState extends State<AddingDevice> {
         result = "Unknown Error $ex";
       });
     }
+
   }
 
   @override
@@ -106,4 +107,4 @@ class AddingDeviceState extends State<AddingDevice> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-}
+}//********************************The End of the Class  ********************************
