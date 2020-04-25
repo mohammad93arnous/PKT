@@ -1,5 +1,9 @@
+
+import 'dart:async';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -51,9 +55,26 @@ class _UserPofState extends State<UserPof> {
     });
     getUserInfo().whenComplete(() {
       getDevicesData(userData);
+      saveDeviceToken();
     });
     super.initState();
   }
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  saveDeviceToken() async {
+    // Get the token for this device
+    String fcmToken = await _fcm.getToken();
+    // Save it to Firestore
+    if (fcmToken != null) {
+      var tokens = Firestore.instance.collection('UsersAccount').document(uID);
+      await tokens.updateData({
+        'FBNotificationToken': fcmToken,
+        'FBFBNotificationTokenCreatedAt': FieldValue.serverTimestamp(), // optional
+        'UserPlatform': Platform.operatingSystem // optional
+      });
+    }
+  }
+
+
 
   Future getUserInfo() async {
     userData = await Firestore.instance
