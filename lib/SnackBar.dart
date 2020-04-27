@@ -101,12 +101,10 @@ colorPallet(String s) {
 snackOK(String title,String text,BuildContext context){
   return Flushbar(
     borderColor: colorPallet('vSnackOKborderColor'),
-    //title:'$title',
-    //message:'$text',
     titleText: Text('$title',style: TextStyle(color: colorPallet('vSnackOKtitleTextColor'),fontSize: 18)),
     messageText:Text('$text',style: TextStyle(color: colorPallet('vSnackOKmessageTextColor')),),
     duration:Duration(seconds: 10),
-    flushbarPosition: FlushbarPosition.BOTTOM,
+    flushbarPosition: FlushbarPosition.TOP,
     flushbarStyle: FlushbarStyle.FLOATING,
     reverseAnimationCurve: Curves.easeOut,
     forwardAnimationCurve: Curves.easeIn,
@@ -137,12 +135,12 @@ snackOK(String title,String text,BuildContext context){
   )..show(context);
 }
 
-snackMessage(String text,BuildContext context){
+snackMessage(String title,String text,BuildContext context){
   // ignore: non_constant_identifier_names
   var SnackBarTitleMessage;
   return Flushbar(
     borderColor: colorPallet('vSnackMessageborderColor'),
-    titleText: Text('   $SnackBarTitleMessage ',style: TextStyle(color: colorPallet('vSnackMessagetitleTextColor'),fontSize: 18)),  //white
+    titleText: Text(' $title',style: TextStyle(color: colorPallet('vSnackMessagetitleTextColor'),fontSize: 18)),  //white
     messageText:Text('$text'+ '$text',style: TextStyle(color: colorPallet('vSnackMessagemessageTextColor')),),
     duration:Duration(seconds: 3),
     flushbarPosition: FlushbarPosition.TOP,

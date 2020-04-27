@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -50,6 +51,17 @@ class _UserPofState extends State<UserPof> {
 
   @override
   void initState() {
+    _fcm.configure(
+        onMessage: (Map<String, dynamic> message) async{
+          print('FCM: $message');
+        },
+        onLaunch: (Map<String, dynamic> message) async{
+          print('onLaunch: $message');
+        },
+        onResume: (Map<String, dynamic> message) async{
+          print('FCM: $message');
+        }
+    );
     setState(() {
       uID = widget.uID;
     });
@@ -75,7 +87,6 @@ class _UserPofState extends State<UserPof> {
   }
 
 
-
   Future getUserInfo() async {
     userData = await Firestore.instance
         .collection('UsersAccount')
@@ -92,7 +103,33 @@ class _UserPofState extends State<UserPof> {
       email = userData.data['Email'];
     });
   }
-
+  snackMessage(String text,BuildContext context){
+    return Flushbar(
+      title:'Notification',
+      message:'$text',
+      borderColor: Colors.white,//Snack Border Color
+      duration:Duration(seconds: 5),// Time To Close
+      flushbarPosition: FlushbarPosition.TOP,// Postion Of the snackbar
+      flushbarStyle: FlushbarStyle.FLOATING,
+      reverseAnimationCurve: Curves.easeOut,
+      forwardAnimationCurve: Curves.easeIn,
+      margin: EdgeInsets.all(8),
+      borderRadius: 8,// حواف المربع
+      backgroundColor: Colors.red, //Snack Color,
+      boxShadows: [BoxShadow(
+          color: Color(0xFFec2e2e), //Color(0xFFec2e2e),
+          offset: Offset(0.0, 2.0),
+          blurRadius: 3.0)],
+      backgroundGradient: LinearGradient(
+          colors: [Color(0xFFec2e2e), //, Color(0xFFec2e2e)
+            Color(0xFFec2e2e)]),
+      isDismissible: false,
+      icon: Icon(
+        Icons.center_focus_weak,// Icon Type
+        color: Colors.white, // Icon Color
+      ),
+    )..show(context);
+  }
   showEditUserNameBottomSheet(BuildContext context) {
     return _scaffoldKey.currentState.showBottomSheet((context) {
       return Container(
