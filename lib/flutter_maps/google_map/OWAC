@@ -1,16 +1,17 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
 import '../../main.dart';
+
 String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
 
+//'pk.eyJ1IjoiaWdhdXJhYiIsImEiOiJjazFhOWlkN2QwYzA5M2RyNWFvenYzOTV0In0.lzjuSBZC6LcOy_oRENLKCg',
 class ShowGivenDeviceMap extends StatefulWidget {
   ShowGivenDeviceMap({this.uID, this.deviceID});
 
@@ -20,6 +21,10 @@ class ShowGivenDeviceMap extends StatefulWidget {
   String deviceID;
 }
 
+// Dependanceies
+//google_maps_flutter: ^0.0.3+3
+//geoflutterfire: ^2.1.0
+//location: ^2.5.3
 class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   final Firestore _database = Firestore.instance;
   Completer<GoogleMapController> _controller = Completer();
@@ -27,9 +32,8 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   BitmapDescriptor pinLocationIcon;
   DocumentSnapshot fbData;
 
-  Set<Circle>_circles=HashSet<Circle>();
-  int _circleIdCounter=1;
-  bool _isCircle=false;
+  Map<CircleId, Circle> circles = <CircleId, Circle>{};
+
   @override
   void initState() {
     crearmarcadores();
@@ -69,21 +73,6 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
     });
   }
 
-  void _setCircles(LatLng point){
-    final String circleIdVal= 'circle_id_$_circleIdCounter';
-    _circleIdCounter++;
-    _circles.add(
-      Circle(
-        circleId: CircleId(circleIdVal),
-        center: point,
-        radius: radius,
-        fillColor: Colors.redAccent.withOpacity(0.5),
-        strokeWidth: 3,
-        strokeColor: Colors.redAccent
-      )
-    );
-  }
-
   crearmarcadores() async {
     Stream<DocumentSnapshot> deviceData = Firestore.instance
         .collection('Devices')
@@ -91,9 +80,6 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
         .snapshots();
     deviceData.listen((DocumentSnapshot devData) {
       if (devData.data.isNotEmpty) {
-        setState(() {
-          fbData=devData;
-        });
         initMarker(devData.data, devData.data.length.toString());
       }
     });
@@ -102,6 +88,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   void initMarker(lugar, lugaresid) {
     var markerIdVal = lugaresid;
     final MarkerId markerId = MarkerId(markerIdVal);
+
     // creating a new MARKER
     final Marker marker = Marker(
       markerId: markerId,
@@ -113,6 +100,20 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
     setState(() {
       // adding a new marker to map
       markers[markerId] = marker;
+    });
+    var circleIdVal = lugaresid;
+    final CircleId circleId = CircleId(circleIdVal);
+    final Circle circle = Circle(
+        circleId: circleId,
+        center: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
+        fillColor: Colors.redAccent.withOpacity(0.5),
+        strokeWidth: 3,
+        strokeColor: Colors.redAccent,
+        radius: radius);
+    if (!mounted) return;
+    setState(() {
+      // adding a new marker to map
+      circles[circleId] = circle;
     });
   }
 
@@ -132,16 +133,9 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
         },
         myLocationEnabled: true,
         markers: Set<Marker>.of(markers.values),
-        circles: _circles,
-        onTap: (point){
-          if(_isCircle){
-            setState(() {
-              _circles.clear();
-              _setCircles(point);
-            });
-          }
-        },
+        circles: Set<Circle>.of(circles.values),
       ),
+//making a small button that when pressed will view a list that contain some small buttons .
       floatingActionButton: SpeedDial(
         backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),
         animatedIcon: AnimatedIcons.list_view,
@@ -164,45 +158,27 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
           SpeedDialChild(
               backgroundColor: Colors.amberAccent.shade700,
               child: Icon(Icons.add_circle_outline, color: Colors.green),
-              label: "Add Circle",
+              label: "Increase Circle",
               onTap: () {
-                _isCircle=true;
-                return showDialog(
-                  context: context,
-                  child: AlertDialog(
-                    backgroundColor: Colors.grey[900],
-                    title: Text('Choose the radius (m)',style: TextStyle(color: Colors.white),),
-                    content: Padding(padding: EdgeInsets.all(8),
-                    child: Material(
-                      color: Colors.black,
-                      child: TextField(
-                        style: TextStyle(fontSize: 16,color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'Ex: 100',suffixText: 'meters',
-                        ),
-                        keyboardType: TextInputType.numberWithOptions(),
-                        onChanged: (input){
-                          setState(() {
-                            radius=double.parse(input);
-                          });
-                        },
-                      ),
-                    ),
-                    ),actions: <Widget>[
-                      FlatButton(
-                        onPressed: (){
-                          Navigator.pop(context);
-                        },
-                        child: Text('OK',style: TextStyle(fontWeight: FontWeight.bold),),
-                      )
-                  ],
-                  )
-                );
-//                setState(() {
-//                  radius = radius + 10;
-//                });
-//                crearmarcadores();
-//                print(radius.toString());
+                setState(() {
+                  radius = radius + 10;
+                });
+                crearmarcadores();
+                print(radius.toString());
+              }),
+          SpeedDialChild(
+              backgroundColor: Colors.amberAccent.shade700,
+              child: Icon(
+                Icons.remove_circle_outline,
+                color: Colors.red,
+              ),
+              label: "Decrease Circle",
+              onTap: () {
+                setState(() {
+                  radius = radius - 10;
+                });
+                crearmarcadores();
+                print(radius.toString());
               }),
         ],
       ),

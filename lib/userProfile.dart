@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +16,7 @@ import 'SnackBar.dart';
 import 'flutter_maps/google_map/ShowGivinDeviceMap.dart';
 import 'flutter_maps/google_map/showMap.dart';
 import 'models/CustomText.dart';
-
+import 'package:http/http.dart'as http;
 //******************* Importing all needed packages for this class *****************************
 class UserPof extends StatefulWidget {
   UserPof(
@@ -45,7 +46,7 @@ class _UserPofState extends State<UserPof> {
   String editedUserName;
   String editedDeviceName;
   QuerySnapshot deviceFBData;
-
+  bool timer;
   ////// Variables filled from FB//////
 
   @override
@@ -390,6 +391,43 @@ class _UserPofState extends State<UserPof> {
     }
   }
 
+  decodeJsonLink()async{
+    setState(() {
+      timer=true;
+    });
+    String link='https://dweet.io/listen/latest/dweet/for/PKT1';
+    var res=await http.get(Uri.encodeFull(link),headers: {"Content-type":"application/json"});
+    var data=json.decode(res.body);
+    var rest=data["with"];
+    print(res.body.toString());
+    print(rest.toString());
+    print(rest[0]['content']);
+    print(rest[0]['content']['Lat']);
+    print(rest[0]['content']['Long']);
+    print(rest[0]['content']['DeviceSerialNumber']);
+    while(timer=true){
+      Timer(Duration(seconds: 3), () {
+        fetchDatabaseJsonDecode(
+            rest[0]['content']['DeviceSerialNumber'].toString(),
+            rest[0]['content']['Lat'],
+            rest[0]['content']['Long']
+        );
+        print('----------Re_Save---------');
+        print(rest[0]['content']['Lat']);
+        print(rest[0]['content']['Long']);
+        print(rest[0]['content']['DeviceSerialNumber']);
+      });
+    }
+
+  }
+
+  fetchDatabaseJsonDecode(deviceID,lat,long)async{
+    print('Saving Inprocess .........');
+    await Firestore.instance.collection('Devices').document(deviceID).updateData({
+      'Location':GeoPoint(lat,long),
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -454,6 +492,10 @@ class _UserPofState extends State<UserPof> {
               trailing: Icon(Icons.perm_device_information),
             ),
             ListTile(
+              onTap: (){
+//                saveDeviceToken();
+                decodeJsonLink();
+              },
               title: Text("History"),
               trailing: Icon(Icons.history),
             ),
