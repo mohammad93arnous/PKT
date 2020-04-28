@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,17 +50,13 @@ class _UserPofState extends State<UserPof> {
 
   @override
   void initState() {
-    _fcm.configure(
-        onMessage: (Map<String, dynamic> message) async{
-          print('FCM: $message');
-        },
-        onLaunch: (Map<String, dynamic> message) async{
-          print('onLaunch: $message');
-        },
-        onResume: (Map<String, dynamic> message) async{
-          print('FCM: $message');
-        }
-    );
+    _fcm.configure(onMessage: (Map<String, dynamic> message) async {
+      print('FCM: $message');
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print('onLaunch: $message');
+    }, onResume: (Map<String, dynamic> message) async {
+      print('FCM: $message');
+    });
     setState(() {
       uID = widget.uID;
     });
@@ -71,7 +66,9 @@ class _UserPofState extends State<UserPof> {
     });
     super.initState();
   }
+
   final FirebaseMessaging _fcm = FirebaseMessaging();
+
   saveDeviceToken() async {
     // Get the token for this device
     String fcmToken = await _fcm.getToken();
@@ -80,12 +77,13 @@ class _UserPofState extends State<UserPof> {
       var tokens = Firestore.instance.collection('UsersAccount').document(uID);
       await tokens.updateData({
         'FBNotificationToken': fcmToken,
-        'FBFBNotificationTokenCreatedAt': FieldValue.serverTimestamp(), // optional
-        'UserPlatform': Platform.operatingSystem // optional
+        'FBFBNotificationTokenCreatedAt': FieldValue.serverTimestamp(),
+        // optional
+        'UserPlatform': Platform.operatingSystem
+        // optional
       });
     }
   }
-
 
   Future getUserInfo() async {
     userData = await Firestore.instance
@@ -103,33 +101,43 @@ class _UserPofState extends State<UserPof> {
       email = userData.data['Email'];
     });
   }
-  snackMessage(String text,BuildContext context){
+
+  snackMessage(String text, BuildContext context) {
     return Flushbar(
-      title:'Notification',
-      message:'$text',
-      borderColor: Colors.white,//Snack Border Color
-      duration:Duration(seconds: 5),// Time To Close
-      flushbarPosition: FlushbarPosition.TOP,// Postion Of the snackbar
+      title: 'Notification',
+      message: '$text',
+      borderColor: Colors.white,
+      //Snack Border Color
+      duration: Duration(seconds: 5),
+      // Time To Close
+      flushbarPosition: FlushbarPosition.TOP,
+      // Postion Of the snackbar
       flushbarStyle: FlushbarStyle.FLOATING,
       reverseAnimationCurve: Curves.easeOut,
       forwardAnimationCurve: Curves.easeIn,
       margin: EdgeInsets.all(8),
-      borderRadius: 8,// حواف المربع
-      backgroundColor: Colors.red, //Snack Color,
-      boxShadows: [BoxShadow(
-          color: Color(0xFFec2e2e), //Color(0xFFec2e2e),
-          offset: Offset(0.0, 2.0),
-          blurRadius: 3.0)],
-      backgroundGradient: LinearGradient(
-          colors: [Color(0xFFec2e2e), //, Color(0xFFec2e2e)
-            Color(0xFFec2e2e)]),
+      borderRadius: 8,
+      // حواف المربع
+      backgroundColor: Colors.red,
+      //Snack Color,
+      boxShadows: [
+        BoxShadow(
+            color: Color(0xFFec2e2e), //Color(0xFFec2e2e),
+            offset: Offset(0.0, 2.0),
+            blurRadius: 3.0)
+      ],
+      backgroundGradient: LinearGradient(colors: [
+        Color(0xFFec2e2e), //, Color(0xFFec2e2e)
+        Color(0xFFec2e2e)
+      ]),
       isDismissible: false,
       icon: Icon(
-        Icons.center_focus_weak,// Icon Type
+        Icons.center_focus_weak, // Icon Type
         color: Colors.white, // Icon Color
       ),
     )..show(context);
   }
+
   showEditUserNameBottomSheet(BuildContext context) {
     return _scaffoldKey.currentState.showBottomSheet((context) {
       return Container(
@@ -525,77 +533,15 @@ class _UserPofState extends State<UserPof> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: InkWell(
-                      onLongPress: () {
-                        showModalBottomSheet(
-                            context: _scaffoldKey.currentContext,
-                            backgroundColor:
-                                Colors.lightGreen.shade300.withOpacity(0.40),
-                            builder: (BuildContext context) {
-                              return Container(
-                                color: Colors.transparent,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Wrap(
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          RaisedButton(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(24),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                              showEditDeviceInfoBottomSheet(
-                                                  context,
-                                                  deviceFBData
-                                                      .documents[i].documentID);
-                                            },
-                                            color: Colors.amberAccent.shade700,
-                                            //Colors.blue.withOpacity(0.5),
-                                            child: Text('Edit',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                )),
-                                          ),
-                                          RaisedButton(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(24),
-                                            ),
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                              String docIdDeleted = deviceFBData
-                                                  .documents[i].documentID;
-                                              await Firestore.instance
-                                                  .collection('Devices')
-                                                  .document(docIdDeleted)
-                                                  .delete();
-                                              await Firestore.instance
-                                                  .collection('SerialNumbers')
-                                                  .document(docIdDeleted)
-                                                  .updateData({
-                                                'ReservedUID': " ",
-                                                'SerialReserved': false
-                                              });
-                                            },
-                                            color: Colors.amberAccent.shade700,
-                                            //Colors.blue.withOpacity(0.5),
-                                            child: Text('Delete',
-                                                style: TextStyle(
-                                                    color: Colors.red)),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                ShowGivenDeviceMap(
+                                  uID: uID,
+                                  deviceID: deviceFBData
+                                      .documents[i].data['DeviceSerialNumber']
+                                      .toString(),
+                                )));
                       },
                       child: Container(
                         height: 80,
@@ -674,23 +620,108 @@ class _UserPofState extends State<UserPof> {
                             ),
                             Positioned(
                                 top: 30,
-                                left: 370,
+                                left: 320,
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                ShowGivenDeviceMap(
-                                                  uID: uID,
-                                                  deviceID: deviceFBData
-                                                      .documents[i]
-                                                      .data[
-                                                          'DeviceSerialNumber']
-                                                      .toString(),
-                                                )));
+                                    showModalBottomSheet(
+                                        context: _scaffoldKey.currentContext,
+                                        backgroundColor: Colors
+                                            .lightGreen.shade300
+                                            .withOpacity(0.40),
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            color: Colors.transparent,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Wrap(
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      RaisedButton(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(24),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          showEditDeviceInfoBottomSheet(
+                                                              context,
+                                                              deviceFBData
+                                                                  .documents[i]
+                                                                  .documentID);
+                                                        },
+                                                        color: Colors
+                                                            .amberAccent
+                                                            .shade700,
+                                                        //Colors.blue.withOpacity(0.5),
+                                                        child: Text('Edit',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                            )),
+                                                      ),
+                                                      RaisedButton(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(24),
+                                                        ),
+                                                        onPressed: () async {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          String docIdDeleted =
+                                                              deviceFBData
+                                                                  .documents[i]
+                                                                  .documentID;
+                                                          await Firestore
+                                                              .instance
+                                                              .collection(
+                                                                  'Devices')
+                                                              .document(
+                                                                  docIdDeleted)
+                                                              .delete();
+                                                          await Firestore
+                                                              .instance
+                                                              .collection(
+                                                                  'SerialNumbers')
+                                                              .document(
+                                                                  docIdDeleted)
+                                                              .updateData({
+                                                            'ReservedUID': " ",
+                                                            'SerialReserved':
+                                                                false
+                                                          });
+                                                        },
+                                                        color: Colors
+                                                            .amberAccent
+                                                            .shade700,
+                                                        //Colors.blue.withOpacity(0.5),
+                                                        child: Text('Delete',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red)),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
                                   },
                                   child: Icon(
-                                    Icons.arrow_forward_ios,
+                                    Icons.mode_edit,
                                     color: Colors.black,
                                     size: 20,
                                   ),

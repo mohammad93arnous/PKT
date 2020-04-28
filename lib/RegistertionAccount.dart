@@ -23,9 +23,9 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
   final _scaffoldKey = GlobalKey(); // Scaffold Key
   bool _obscureTextLogin = true;
   bool _obscureTextRePassLogin = true;
-  TextEditingController loginPasswordController = new TextEditingController();
-  TextEditingController loginRePasswordController = new TextEditingController();
-  TextEditingController loginAccountName = new TextEditingController();
+  TextEditingController loginPasswordController = new TextEditingController();//creating a controller for the password
+  TextEditingController loginRePasswordController = new TextEditingController();//creating a controller for the re password
+  TextEditingController loginAccountName = new TextEditingController();//creating a controller for the name
 
   bool passValidated = false;
   bool userNameValidated = false;
@@ -34,7 +34,7 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
   String _loginPassword;
   String loginRePassword;
 
-  FirebaseAuth auth;
+  FirebaseAuth auth; //calling the firebase authentication
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     super.dispose();
   }
 
-  accountNameValidation() {
+  accountNameValidation() {//function that has some  rules to choose the name
     if (loginAccountName.text == null || accountName.length <= 3) {
       snackError('Name Must Contain Text Only', context);
       userNameValidated = false;
@@ -73,16 +73,16 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
     }
   }
 
-  passwordValidation() {
+  passwordValidation() {//function that has some  rules to choose the password and chick between the password and re password if they match or not
     if (loginPasswordController.text != null &&
         loginPasswordController.text.length < 4) {
-      snackError('Passwoed must be more than 4', context);
+      snackError('Password must be more than 4', context);
     } else if (loginRePasswordController.text != null &&
         loginRePasswordController.text.length < 4) {
-      snackError('Passwoed must be more than 4', context);
+      snackError('Password must be more than 4', context);
     } else if (loginPasswordController.text != loginRePasswordController.text &&
         loginRePasswordController.text != loginPasswordController.text) {
-      snackError('Passwoed is not matched', context);
+      snackError('Password is not matched', context);
     } else {
       setState(() {
         passValidated = true;
@@ -107,7 +107,7 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: SingleChildScrollView( //body
         child: Column(
           children: <Widget>[
             Padding(
@@ -261,7 +261,7 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
   }
 
   // ignore: missing_return
-  Future validatingBeforeNavigate() {
+  Future validatingBeforeNavigate() {//is a function that chick the information that the user input and if the information are true it will continue to the next page.
     print(userNameValidated.toString());
     print(passValidated.toString());
     if (accountName == null) {
@@ -277,7 +277,7 @@ class _RegistertionAccountState extends State<RegistertionAccount> {
       passValidated = false; //new
     } else if (loginPasswordController.text != loginRePasswordController.text &&
         loginRePasswordController.text != loginPasswordController.text) {
-      snackError('Passwoed is not matched', context);
+      snackError('Password is not matched', context);
     } else {
       accountNameValidation();
       passwordValidation();

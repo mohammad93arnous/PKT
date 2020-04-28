@@ -13,12 +13,14 @@ String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
 
 //'pk.eyJ1IjoiaWdhdXJhYiIsImEiOiJjazFhOWlkN2QwYzA5M2RyNWFvenYzOTV0In0.lzjuSBZC6LcOy_oRENLKCg',
 class ShowGivenDeviceMap extends StatefulWidget {
-  ShowGivenDeviceMap({this.uID,this.deviceID});
+  ShowGivenDeviceMap({this.uID, this.deviceID});
+
   @override
   _ShowGivenDeviceMapState createState() => _ShowGivenDeviceMapState();
-String uID;
-String deviceID;
+  String uID;
+  String deviceID;
 }
+
 // Dependanceies
 //google_maps_flutter: ^0.0.3+3
 //geoflutterfire: ^2.1.0
@@ -31,8 +33,9 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   DocumentSnapshot fbData;
 
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
+
   @override
-  void initState(){
+  void initState() {
     crearmarcadores();
     super.initState();
     setCustomMapPin();
@@ -46,40 +49,50 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
 
   void setCustomMapPin() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 1.0),
-        'assets/map-marker.png');
+        ImageConfiguration(devicePixelRatio: 1.0), 'assets/map-marker.png');
   }
+
   MapType _defaultMapType = MapType.normal;
 
-  void _changeMapType() {
-    if (!mounted) return;
+  void _changeMapTypeToNormal() {
+    if (!mounted)
+      return; //It is an error to call setState unless mounted is true.
     setState(() {
-      _defaultMapType = _defaultMapType == MapType.normal ? MapType.normal : MapType.normal;
+      _defaultMapType =
+          _defaultMapType == MapType.normal ? MapType.normal : MapType.normal;
     });
   }
 
-  void _changeMapType2() {
-    if (!mounted) return;
+  void _changeMapTypeToSatellite() {
+    if (!mounted)
+      return; //It is an error to call setState unless mounted is true.
     setState(() {
-      _defaultMapType = _defaultMapType == MapType.satellite ? MapType.satellite : MapType.satellite;
+      _defaultMapType = _defaultMapType == MapType.satellite
+          ? MapType.satellite
+          : MapType.satellite;
     });
   }
-  crearmarcadores() async{
-    Stream<DocumentSnapshot> deviceData = Firestore.instance.collection('Devices').document(widget.deviceID).snapshots();
-    deviceData.listen((DocumentSnapshot devData){
-      if(devData.data.isNotEmpty){
-          initMarker(devData.data, devData.data.length.toString());
 
+  crearmarcadores() async {
+    Stream<DocumentSnapshot> deviceData = Firestore.instance
+        .collection('Devices')
+        .document(widget.deviceID)
+        .snapshots();
+    deviceData.listen((DocumentSnapshot devData) {
+      if (devData.data.isNotEmpty) {
+        initMarker(devData.data, devData.data.length.toString());
       }
     });
   }
+
   void initMarker(lugar, lugaresid) {
     var markerIdVal = lugaresid;
     final MarkerId markerId = MarkerId(markerIdVal);
 
     // creating a new MARKER
     final Marker marker = Marker(
-      markerId: markerId,icon:pinLocationIcon ,
+      markerId: markerId,
+      icon: pinLocationIcon,
       position: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
       infoWindow: InfoWindow(title: lugar['DeviceName']),
     );
@@ -88,16 +101,15 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
       // adding a new marker to map
       markers[markerId] = marker;
     });
-    var circleIdVal=lugaresid;
+    var circleIdVal = lugaresid;
     final CircleId circleId = CircleId(circleIdVal);
-    final Circle circle=Circle(
+    final Circle circle = Circle(
         circleId: circleId,
         center: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
         fillColor: Colors.redAccent.withOpacity(0.5),
         strokeWidth: 3,
         strokeColor: Colors.redAccent,
-        radius: radius
-    );
+        radius: radius);
     if (!mounted) return;
     setState(() {
       // adding a new marker to map
@@ -114,7 +126,7 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: GoogleMap(
-        mapType:_defaultMapType,
+        mapType: _defaultMapType,
         initialCameraPosition: _kGooglePlex,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
@@ -123,56 +135,58 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
         markers: Set<Marker>.of(markers.values),
         circles: Set<Circle>.of(circles.values),
       ),
-//      floatingActionButton: FloatingActionButton.extended(
-//        onPressed: _currentLocation,
-//        label: Text('Your Location'),
-//        icon: Icon(Icons.location_on),
-//      ),
-      floatingActionButton:SpeedDial(backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),animatedIcon:AnimatedIcons.list_view,
+//making a small button that when pressed will view a list that contain some small buttons .
+      floatingActionButton: SpeedDial(
+        backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),
+        animatedIcon: AnimatedIcons.list_view,
         children: [
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+          SpeedDialChild(
+              backgroundColor: Colors.amberAccent.shade700,
               child: Icon(Icons.location_searching),
               label: "current location",
-              onTap: ()=>_currentLocation()),
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              onTap: () => _currentLocation()),
+          SpeedDialChild(
+              backgroundColor: Colors.amberAccent.shade700,
               child: Icon(Icons.map),
               label: "Normal Map",
-              onTap: ()=>_changeMapType()
-          ),
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
+              onTap: () => _changeMapTypeToNormal()),
+          SpeedDialChild(
+              backgroundColor: Colors.amberAccent.shade700,
               child: Icon(Icons.map),
               label: "Satellite Map",
-              onTap: ()=>_changeMapType2()
-          ),
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-              child: Icon(Icons.add_circle_outline,color: Colors.green),
-              label: "Increse Circle",
-              onTap: (){
+              onTap: () => _changeMapTypeToSatellite()),
+          SpeedDialChild(
+              backgroundColor: Colors.amberAccent.shade700,
+              child: Icon(Icons.add_circle_outline, color: Colors.green),
+              label: "Increase Circle",
+              onTap: () {
                 setState(() {
-                  radius=radius+5;
+                  radius = radius + 10;
                 });
                 crearmarcadores();
                 print(radius.toString());
-              }
-          ),
-          SpeedDialChild(backgroundColor:Colors.amberAccent.shade700,
-              child: Icon(Icons.remove_circle_outline,color: Colors.red,),
-              label: "Decrese Circle",
-              onTap: (){
+              }),
+          SpeedDialChild(
+              backgroundColor: Colors.amberAccent.shade700,
+              child: Icon(
+                Icons.remove_circle_outline,
+                color: Colors.red,
+              ),
+              label: "Decrease Circle",
+              onTap: () {
                 setState(() {
-                  radius=radius-5;
+                  radius = radius - 10;
                 });
                 crearmarcadores();
                 print(radius.toString());
-              }
-          ),
-        ],) ,
+              }),
+        ],
+      ),
     );
   }
 
-
-
   void _currentLocation() async {
+    //taking the current location of the user's android device .
     final GoogleMapController controller = await _controller.future;
     LocationData currentLocation;
     var location = new Location();
@@ -190,6 +204,4 @@ class _ShowGivenDeviceMapState extends State<ShowGivenDeviceMap> {
       ),
     ));
   }
-
-
 }

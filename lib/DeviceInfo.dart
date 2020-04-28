@@ -59,7 +59,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
     super.dispose();
   }
 
-  checkIfQRScanned() {
+  checkIfQRScanned() {//checking when the user open the camera to scan QR code and take the result and save it .
     if (result == null) {
       if (!mounted) return;
       setState(() {
@@ -76,7 +76,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
     }
   }
 
-  deviNameValidation() {
+  deviNameValidation() {//device name method that gives some conditions for choosing a name of the device.
     if (deviceNameP == null) {
       if (deviceAccountName.text == null || deviceName.length <= 3) {
         snackError('Name Must Contain Text Only', context);
@@ -99,7 +99,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
     }
   }
 
-  deviSiralValidation() {
+  deviSiralValidation() {//device serial method that gives some conditions for input the serial number of the device .
     if (result == null) {
       if (deviceSer.text == null || deviceSerial.length <= 3) {
         snackError('Serial Number Must Contain Text Only', context);
@@ -267,7 +267,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
     );
   }
 
-  Future scanQR() async {
+  Future scanQR() async {//scan QR function that when the user click on Scan QR this function will be called and its will read the QR code
     try {
       qrResult = await BarcodeScanner.scan();
       if (!mounted) return;
@@ -290,14 +290,14 @@ class _DeviceInfoState extends State<DeviceInfo> {
     //checkIfQRScanned();
   }
 
-  Future validatingBeforeNavigate() {
+  Future validatingBeforeNavigate() {//is a function that chick the information that the user input and if the information are true it will continue to the next page.
     print(deviceNameValidated.toString());
     print(deviceSerialValidated.toString());
     if (deviceNameP != null && deviceSer.text != null) {
       validateSerialNumber(deviceNameP, deviceSer.text);
     } else {
       print('else');
-      if (deviceName == null) {
+      if (deviceName == null) {//Local notifications if the the user missed some inputs and press the next button.
         snackError('Device Name cannot be empty', context);
       } else if (deviceSerial == null || result == null) {
         snackError('Device Serial Number cannot be empty', context);
@@ -325,8 +325,9 @@ class _DeviceInfoState extends State<DeviceInfo> {
     }
   }
 
-  Future validateSerialNumber(String deviceName, String serialNumber) async {
-    await Firestore.instance
+  Future validateSerialNumber(String deviceName, String serialNumber) async {//Function to validate the serial number of the device
+    //every device has a reserved serial number in the database , the function will chick with the firebase if the
+    await Firestore.instance// serial number is reserved or is free to use .
         .collection('SerialNumbers')
         .document(deviceSerial)
         .get()
@@ -361,14 +362,14 @@ class _DeviceInfoState extends State<DeviceInfo> {
     });
   }
 
-  getLocation() async {
+  getLocation() async {//getting the user's android device location
     position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: prefix0.LocationAccuracy.high);
     debugPrint('location: ${position.latitude}');
     return position;
   }
 
-  Future addDevice(String serial, String deviceName) async {
+  Future addDevice(String serial, String deviceName) async {//upload information of the device to the firebase in the collection of device
     print('Saving Device to DB');
     int distanceAway = 0;
     await Firestore.instance
@@ -392,7 +393,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
     });
   }
 
-  Future updateSerial(String serial) async {
+  Future updateSerial(String serial) async {//uploading the serial number of the wearable device
     await Firestore.instance
         .collection('SerialNumbers')
         .document(serial)
@@ -402,7 +403,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
         }));
   }
 
-  Future signUp() async {
+  Future signUp() async {//function to chick the email and password then send them to the firebase
     print('Creating User');
     if (widget.email == null) {
       snackError('Email is Empty', context);
@@ -418,7 +419,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
     return user;
   }
 
-  Future saveUser() async {
+  Future saveUser() async {//function to save user information
     print('adding User to DB');
     if (user != null) {
       if (user.uid != null && user.email != null) {

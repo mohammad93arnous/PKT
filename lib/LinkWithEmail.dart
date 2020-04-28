@@ -105,11 +105,11 @@ class _LinkWithEmailState extends State<LinkWithEmail> {
                     color: Colors.white70,
                   ),
                   RaisedButton(
-                    onPressed: () {
-                      if (email == null) {
+                    onPressed: () {//validate before navigate to the next step
+                      if (email == null) {//chick if the email is written in the field
                         snackError('Email cannot be empty', context);
                       } else {
-                        if (email.length <= 5 || email.contains('@') == false) {
+                        if (email.length <= 5 || email.contains('@') == false) {//some conditions input to write en email
                           snackError('Email Invalid', context);
                         } else {
                           Navigator.of(context).push(MaterialPageRoute(

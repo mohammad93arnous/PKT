@@ -25,7 +25,7 @@ class AddingDeviceState extends State<AddingDevice> {
     scanQR();
     super.initState();
   }
-
+//At this page adding a device when a new user enter the app
   Future scanQR() async {
     try {
       String qrResult = await BarcodeScanner.scan();

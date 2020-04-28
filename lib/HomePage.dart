@@ -26,7 +26,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
+  FirebaseMessaging firebaseMessaging = new FirebaseMessaging();//Firebase Messaging is to make notifications and send it to the android device
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
   TextEditingController forgetPasswordEmailController = TextEditingController();
@@ -58,7 +58,8 @@ class _HomePageState extends State<HomePage> {
     var ios = new IOSInitializationSettings();
     var platform = new InitializationSettings(android, ios);
     flutterLocalNotificationsPlugin.initialize(platform);
-    firebaseMessaging.configure(onLaunch: (Map<String, dynamic> msg) {
+    firebaseMessaging.configure(//in this method onLaunch, onResume and on message just to make sure the notification will be send in any situations.
+        onLaunch: (Map<String, dynamic> msg) {
       print("onLaunch called ${(msg)}");
     }, onResume: (Map<String, dynamic> msg) {
       print("onResume called ${(msg)}");
@@ -68,7 +69,7 @@ class _HomePageState extends State<HomePage> {
       showNotification(msg);
     });
 
-    firebaseMessaging.requestNotificationPermissions(
+    firebaseMessaging.requestNotificationPermissions(//making a  request for a permission to allow the app for notifications
         const IosNotificationSettings(sound: true, alert: true, badge: true));
     firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings setting) {
@@ -95,7 +96,7 @@ class _HomePageState extends State<HomePage> {
         0, "${msg.keys}", "${msg.values}", platform);
   }
 
-  update(String token) {
+  update(String token) { //just taking the token number of the user's android device and upload it to the database ,it will help in the notification method.
     print(token);
     DatabaseReference databaseReference = new FirebaseDatabase().reference();
     databaseReference.child('fcm-token/$token').set({"token": token});
@@ -103,13 +104,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
-  Future onLogIn() async {
-    try {
+  Future onLogIn() async {//ON login method
+    try {//and starting with try nad catch to avoid an error and it will chick from the firebase data base if the user is registered .
       user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       if (user.uid.length > 0 && user.uid != null) {
         if (user.uid == null) {
-          print('1');
+
         } else {
           setState(() {
             userId = user.uid;
@@ -118,20 +119,20 @@ class _HomePageState extends State<HomePage> {
         }
       }
     } catch (e) {
-      snackError('Email or Password Invalid', context);
+      snackError('Email or Password Invalid', context);//when there is an error the catch will notify the user there is an error with your email ro password.
     }
     return null;
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {//starting with the widget of the page
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        //backgroundColor: Color.fromARGB(255, 255, 10, 10),
+        //backgroundColor of the page : Color.fromARGB(255, 255, 10, 10),
         title: Text(
-          "Parental Kids Tracker",
+          "Parental Kids Tracker", //choosing the name of the App and the styling it .
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 30.0,
@@ -141,13 +142,15 @@ class _HomePageState extends State<HomePage> {
 
         backgroundColor: Colors.lightGreen.shade700.withOpacity(0.50),
       ),
-      body: SingleChildScrollView(
+
+
+      body: SingleChildScrollView(//starting of the body
         child: Column(
           children: <Widget>[
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Image.asset('assets/images/family.png'),
+                child: Image.asset('assets/images/family.png'),//calling an image from an assets file
               ),
               height: 200,
             ),
@@ -278,9 +281,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  showForgetPassBottomSheet(BuildContext pnContext) {
+  showForgetPassBottomSheet(BuildContext pnContext) {//Here is the function of forgetting password that will ask the user for the email that the user
+    //wants to create a new password and send to the user an email has a link to change the password with a new one .
     return _scaffoldKey.currentState.showBottomSheet((context) {
-      return Container(
+      return Container(//The container which will hold the widget inside it
         height: 375,
         decoration: BoxDecoration(
             color: Colors.green.withOpacity(0.7),
@@ -297,7 +301,8 @@ class _HomePageState extends State<HomePage> {
                       Icons.vpn_key,
                       color: Colors.amber,
                       size: 100,
-                    )),
+                    )
+                ),
               ),
               flex: 5,
             ),
@@ -349,8 +354,8 @@ class _HomePageState extends State<HomePage> {
                           setState(() {
                             forgetPassEmail = value;
                           });
-                        }
-                      },
+                        }//else
+                      },//on changed
                     ),
                     SizedBox(
                       height: 18,
@@ -365,7 +370,7 @@ class _HomePageState extends State<HomePage> {
                               .sendPasswordResetEmail(email: forgetPassEmail);
                           Navigator.of(pnContext).pop();
                         }
-                      },
+                      },//on Pressed
                       padding: EdgeInsets.only(left: 48, right: 48),
                       child: Text(
                         "Send Reset Email",
@@ -390,5 +395,6 @@ class _HomePageState extends State<HomePage> {
                 topLeft: Radius.circular(16), topRight: Radius.circular(16))),
         backgroundColor: Colors.white,
         elevation: 2);
-  }
+  }//The end of the forgetting password function
+
 } //********************************The End of the Class  ********************************

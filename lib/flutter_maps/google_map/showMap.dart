@@ -11,9 +11,8 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../../main.dart';
 
-String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";
+String key = "AIzaSyD2OiBYq57wAfvwboGtwwGk6xqTHNKLceY";//the API key to active the google services which activating google map
 
-//'pk.eyJ1IjoiaWdhdXJhYiIsImEiOiJjazFhOWlkN2QwYzA5M2RyNWFvenYzOTV0In0.lzjuSBZC6LcOy_oRENLKCg',
 class ShowMap extends StatefulWidget {
   ShowMap({this.uID});
   @override
@@ -51,24 +50,25 @@ class _ShowMapState extends State<ShowMap> {
   }
   MapType _defaultMapType = MapType.normal;
   void _changeMapType() {
-    if (!mounted) return;
+    if (!mounted) return;//It is an error to call setState unless mounted is true.
     setState(() {
       _defaultMapType = _defaultMapType == MapType.normal ? MapType.normal : MapType.normal;
     });
   }
 
   void _changeMapType2() {
-    if (!mounted) return;
+    if (!mounted) return;//It is an error to call setState unless mounted is true.
     setState(() {
       _defaultMapType = _defaultMapType == MapType.satellite ? MapType.satellite : MapType.satellite;
     });
   }
-  crearmarcadores() async{
+  crearmarcadores() async{//this function will fetch the data from firebase and chick in the Devices collection and then take the information about how many devices are there
+    //and then will create marker with a circle around it .
     Stream<QuerySnapshot> deviceData = Firestore.instance.collection('Devices')
         .where('UID',isEqualTo: widget.uID).snapshots();
     deviceData.listen((QuerySnapshot devData){
-      if(devData.documents.isNotEmpty){
-        if (!mounted) return;
+      if(devData.documents.isNotEmpty){//chick if the collection of the device and the data we need is empty or not
+        if (!mounted) return;//It is an error to call setState unless mounted is true.
         setState(() {
           clientsToggle = true;
           fbData=devData;
@@ -93,24 +93,25 @@ class _ShowMapState extends State<ShowMap> {
       // adding a new marker to map
       markers[markerId] = marker;
     });
-    var circleIdVal=lugaresid;
-    final CircleId circleId = CircleId(circleIdVal);
-    final Circle circle=Circle(
-        circleId: circleId,
-        center: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
-        fillColor: Colors.redAccent.withOpacity(0.5),
-        strokeWidth: 3,
-        strokeColor: Colors.redAccent,
-        radius: radius
-    );
-    if (!mounted) return;
-    setState(() {
-      // adding a new marker to map
-      circles[circleId] = circle;
-    });
+//    var circleIdVal=lugaresid;
+//    final CircleId circleId = CircleId(circleIdVal);
+//    final Circle circle=Circle(
+//        circleId: circleId,
+//        center: LatLng(lugar['Location'].latitude, lugar['Location'].longitude),
+//        fillColor: Colors.redAccent.withOpacity(0.5),
+//        strokeWidth: 3,
+//        strokeColor: Colors.redAccent,
+//        radius: radius
+//
+//    );
+//    if (!mounted) return;
+//    setState(() {
+//      // adding a new marker to map
+//      circles[circleId] = circle;
+//    });
   }
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
+  static final CameraPosition _kGooglePlex = CameraPosition(//seeting the camera position
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
@@ -120,6 +121,7 @@ class _ShowMapState extends State<ShowMap> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body:MapBody(context),
+      //making a small button that when pressed will view a list that contain some small buttons .
       floatingActionButton:SpeedDial(
         backgroundColor:Colors.lightGreen.shade700.withOpacity(0.50),
         animatedIcon:AnimatedIcons.list_view,
@@ -167,7 +169,7 @@ class _ShowMapState extends State<ShowMap> {
         ],) ,
     );
   }
-  Widget MapBody(BuildContext context){
+  Widget MapBody(BuildContext context){//the widget that will hold the map
     return Column(
       children: <Widget>[
         Stack(
@@ -176,15 +178,15 @@ class _ShowMapState extends State<ShowMap> {
               height: MediaQuery.of(context).size.height,
               width: double.infinity,
               color: Colors.black,
-              child: GoogleMap(
-                mapType:_defaultMapType,
-                initialCameraPosition: _kGooglePlex,
+              child: GoogleMap(//calling the map from the google map package
+                mapType:_defaultMapType,//calling the default map type that will allow the user change between map type
+                initialCameraPosition: _kGooglePlex,//calling the camera postion that made up before
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
                 },
                 myLocationEnabled: true,
-                markers: Set<Marker>.of(markers.values),
-                circles: Set<Circle>.of(circles.values),
+                markers: Set<Marker>.of(markers.values),//set the markers on the map and its mean the number of the wearable devices that have been registered.
+                circles: Set<Circle>.of(circles.values),//make a circle around the device.
               ),
             ),
             Positioned(
@@ -231,7 +233,7 @@ class _ShowMapState extends State<ShowMap> {
     );
   }
 
-  zoomInTarget(deviceLat,deviceLong) async {
+  zoomInTarget(deviceLat,deviceLong) async {//a method that will zoom when the target is choosed
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -246,7 +248,7 @@ class _ShowMapState extends State<ShowMap> {
     ));
   }
 
-  void _currentLocation() async {
+  void _currentLocation() async {//taking the current location of the user's android device .
     final GoogleMapController controller = await _controller.future;
     LocationData currentLocation;
     var location = new Location();

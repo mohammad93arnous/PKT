@@ -12,15 +12,15 @@ import 'userProfile.dart';
 
 //******************* Importing all needed packages for this class *****************************
 class AddDeviceAfterAuth extends StatefulWidget {
-  AddDeviceAfterAuth({this.result, this.uID});
+  AddDeviceAfterAuth({this.result, this.uID});//calling the variable from another class
 
   @override
   State<StatefulWidget> createState() => new _AddDeviceAfterAuthState();
-  String result;
-  String uID;
+  String result;//the result of the serial number
+  String uID;//user ID
 }
 
-class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
+class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {//adding a new device when the user logging in the account .
   bool _obscureTextLogin = true;
   TextEditingController deviceAccountName = new TextEditingController();
   TextEditingController deviceSer = new TextEditingController();
@@ -51,7 +51,7 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     super.dispose();
   }
 
-  checkIfQRScanned() {
+  checkIfQRScanned() {//checking when the user open the camera to scan QR code and take the result and save it .
     if (result == null) {
       setState(() {
         deviceSerial = 'Device Serial Number';
@@ -66,10 +66,10 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     }
   }
 
-  deviNameValidation() {
+  deviNameValidation() {//device name method that gives some conditions for choosing a name of the device.
     if (deviceNameP == null) {
       if (deviceAccountName.text == null || deviceName.length <= 3) {
-        //snackError('Name Must Contain Text Only', context);
+       snackError('Name must be more than three characters', context);
         deviceNameValidated = false;
       } else if (deviceAccountName.text.contains('-,*,/,+,=,(,),%,@,!', 0) ==
           true) {
@@ -87,10 +87,10 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     }
   }
 
-  deviSiralValidation() {
+  deviSiralValidation() {//device serial method that gives some conditions for input the serial number of the device .
     if (result == null) {
       if (deviceSer.text == null || deviceSerial.length <= 3) {
-        snackError('Serial Number Must Contain Text Only', context);
+        snackError('Serial Number Must be more than three numbers', context);
         deviceSerialValidated = false;
       } else if (deviceSer.text.contains('-,*,/,+,=,(,),%,@,!', 0) == true) {
         snackError('Serial Number Must Contain Text Only', context);
@@ -108,7 +108,7 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {//a widget and making an app bar .
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -123,19 +123,19 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: SingleChildScrollView(//the body
         child: Column(
           children: <Widget>[
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(30.0),
-                child: Image.asset('assets/band.png'),
+                child: Image.asset('assets/band.png'),//importing an image and set it in the page
               ),
               height: 250.0,
             ),
             Padding(
               padding: const EdgeInsets.all(30.0),
-              child: TextFormField(
+              child: TextFormField(//creating text field and giving conditions of the input keyboard type
                 inputFormatters: [
                   WhitelistingTextInputFormatter(RegExp("[a-zA-Z 0-9 _-]"))
                 ],
@@ -190,9 +190,7 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(
-                onPressed: () {
-//                  Navigator.of(context).push(MaterialPageRoute(
-//                      builder: (BuildContext context) => AddingDevice()));
+                onPressed: () {//activate the button of the scan QR
                   scanQR().whenComplete(() {
                     setState(() {
                       result = qrResult;
@@ -250,7 +248,7 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     );
   }
 
-  Future scanQR() async {
+  Future scanQR() async { //scan QR function that when the user click on Scan QR this function will be called and its will read the QR code
     try {
       qrResult = await BarcodeScanner.scan();
       setState(() {
@@ -272,14 +270,14 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     //checkIfQRScanned();
   }
 
-  Future validatingBeforeNavigate() {
+  Future validatingBeforeNavigate() {//is a function that chick the information that the user input and if the information are true it will continue to the next page.
     print(deviceNameValidated.toString());
     print(deviceSerialValidated.toString());
     if (deviceNameP != null && deviceSer.text != null) {
       validateSerialNumber(deviceNameP, deviceSer.text);
     } else {
       print('else');
-      if (deviceName == null) {
+      if (deviceName == null) {//Local notifications if the the user missed some inputs and press the next button.
         snackError('Device Name cannot be empty', context);
       } else if (deviceSerial == null || result == null) {
         snackError('Device Serial Number cannot be empty', context);
@@ -306,9 +304,9 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     }
   }
 
-  Future validateSerialNumber(String deviceName, String serialNumber) async {
-    await Firestore.instance
-        .collection('SerialNumbers')
+  Future validateSerialNumber(String deviceName, String serialNumber) async {//Function to validate the serial number of the device
+    await Firestore.instance//every device has a reserved serial number in the database , the function will chick with the firebase if the
+        .collection('SerialNumbers') // serial number is reserved or is free to use .
         .document(deviceSerial)
         .get()
         .then((serialData) {
@@ -330,14 +328,14 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     });
   }
 
-  getLocation() async {
+  getLocation() async {//getting the user's android device location
     position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: prefix0.LocationAccuracy.high);
     debugPrint('location: ${position.latitude}');
     return position;
   }
 
-  Future addDevice(String serial, String deviceName) async {
+  Future addDevice(String serial, String deviceName) async {//upload information of the device to the firebase in the collection of device
     int distanceAway = 0;
     await Firestore.instance
         .collection('Devices')
@@ -359,7 +357,7 @@ class _AddDeviceAfterAuthState extends State<AddDeviceAfterAuth> {
     });
   }
 
-  Future updateSerial(String serial) async {
+  Future updateSerial(String serial) async {//uploading the serial number of the wearable device
     await Firestore.instance
         .collection('SerialNumbers')
         .document(serial)
